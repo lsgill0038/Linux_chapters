@@ -1,0 +1,270 @@
+SSH
+
+Objectives
+Learn how SSH works
+Learn the functions of SSH
+Learn how to use key authentication with SSH
+
+2
+Secure Shell (SSH)
+What is SSH?
+SSH is a protocol that allows you to remotely connect to a
+system and run command line and potentially GUI protocols
+It also allows for SFTP transfers
+And SSH tunnels, allowing you to tunnel your connection
+through a server located elsewhere
+Most Linux Server distributions come with an SSH server
+preinstalled because it is considered secure
+Default port is 22
+3
+
+Background Info - Symmetric Encryption
+Symmetric Encryption - is encryption in which one key is used to
+both encrypt and decrypt the information
+The key is generally called a shared secret
+In SSH the shared secret is session specific and a new one is
+generated for each client that connects
+There are a variety of connection algorithms like:
+AES
+Blowfish
+4
+
+Background Info - Asymmetric Encryption
+Asymmetric Encryption - is encryption in which a public key is
+shared to encrypt the data and a private key is used to decrypt the
+data on the server end
+The Asymmetric encryption is only used in establishing the session
+Example protocols:
+Diffie Hellman
+Elliptic Curve Diffie Hellman
+5
+
+How does SSH work?
+1. First a TCP session must be established through a TCP handshake
+2. Then the server presents accepted encryption protocols and
+versions. As well as the authentication key for the client to verify
+the server. If there is a matching pair, then the connection will
+proceed.
+3. The client will also receive the public key for the server. The client
+will then verify the public key with historical records (if available),
+then connect.
+4. First Asymmetric encryption is used to establish a secure session.
+5. Then Symmetric encryption is used to share session data securely.
+6
+
+OpenSSH Server
+Most common SSH server
+Comes preinstalled on Debian
+Configuration is in /etc/ssh/sshd_config
+Service name sshd
+7
+
+/etc/ssh/sshd_config
+It's a good idea to disable remote login for root
+You can disable ciphers and algorithms that are considered
+insecure
+You can give specific permissions to specific groups, for example
+you can force the shell to be sftp
+8
+
+~/.ssh/known_hosts
+The known_hosts contains all stored authenticated servers
+The public key's are stored when a user accepts a new key and
+stores it permanently for future reference
+php.scweb.ca,204.225.7.45 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTY...
+If the key is changed, most SSH clients will not allow you to
+connect, until you remove the line from known_hosts
+For security reasons you should verify the key through another
+means, like a phone call
+9
+
+Opening a remote shell
+One of the most common uses of an SSH server is remote
+administration
+SSH allows you to open a remote terminal and run any commands
+as if you were connected directly
+Make sure you don't run the shutdown command remote ...
+You can also connect to run a single command
+10
+
+Command: ssh
+ssh [options] [user@]hostname [command]
+Command Description
+ssh php.scweb.ca
+Connect to php.scweb.ca and login as
+the current user on the client system
+ssh root@php.scweb.ca
+Connect to php.scweb.ca login as user
+root
+ssh -C root@php.scweb.ca Connect with compression enabled
+ssh -p 50022 server.com Connect to port 50022
+11
+
+File Transfers
+SSH servers also support file transfer
+There are 2 common methods
+SFTP - Secure File Transfer Protocol
+Which from a user perspective operates similar to FTP based
+on commands
+From a system perspective has a much cleaner
+implementation
+SCP - Secure Copy
+Works similar to the cp command
+12
+
+Command: scp
+scp [options] [[user@host1:]]file1 [[user@host2:]]file2
+Command Description
+scp
+root@php.scweb.ca:~/hello.txt
+/tmp/
+Copy hello.txt from the home
+directory of root on php.scweb.ca
+to /tmp on the current host
+scp /etc/hosts
+root@php.scweb.ca:/etc/hosts
+Copy your local copy of /etc/hosts
+to php.scweb.ca /etc/hosts
+13
+
+Command: sftp
+sftp [user@]host
+Example: sftp root@php.scweb.ca
+Command Description
+put Upload a file to the server
+get Download a file from the server
+lls List local files
+ls List remote files
+14
+
+Command: sftp (continued)
+Command Description
+lcd Change local directory
+cd Change remote directory
+lmkdir Make a directory locally
+mkdir Make a directory remotely
+exit Exit SFTP
+15
+
+Scripting SSH/SFTP
+Notice with all the above commands there is no password option
+The password must be entered manually by the user
+Which means we can't easily script any of the commands above
+There are 2 solutions to scripting SSH
+sshpass - a command that wraps around ssh commands and
+provides a password, however the password would be in plain
+text in the scripts (considered bad practise)
+SSH Key Authentication - using keys to authenticate the user
+similar to how the user authenticates the server
+16
+
+Command: sshpass
+sshpass works by expecting the prompt assword: (to match
+Password: or password:)
+sshpass [-ffilename|-dnum|-ppassword|-e] [options] command arguments
+Command Description
+sshpass -p"password"
+ssh root@php.scweb.ca
+Connect using ssh to php.scweb.ca with
+the password password
+sshpass -f"pass.txt"
+sftp
+root@php.scweb.ca
+Connect using sftp to php.scweb.ca with
+the password being the first line of pass.txt
+17
+
+Where and Why to use sshpass
+Never! ...
+Unless of course there is no possible way to use an authorized key
+Some companies will refuse to use authorized keys
+Some times the server implementation doesn't support
+authorized keys
+18
+
+~/.ssh/authorized_keys
+This is the file in each home directory on a server where keys that
+are accepted as authentication are stored
+You can manually put public keys of authenticated users in this file
+Example:
+ssh-rsa asioudvvabwasduibanUInasOSDUIFnSKLDIo8809sdyfBKJSDFyIBfdkJSD ...
+Alternatively you can have ssh-copy-id to add the key for you
+19
+
+Command: ssh-keygen
+ssh-keygen is used to generate authentication keys to be stored in
+authorized_keys
+ssh-keygen [-b bits] [-t dsa | ecdsa | ed25519 | rsa] [-N new_passphrase]
+Command Description
+ssh-keygen
+Will prompt the user for input
+to create SSH keys
+ssh-keygen -t rsa -b 4096 -C
+"fiacobacci@stclaircollege.ca"
+Will create a 4096 bit RSA key,
+with the email specified
+20
+
+Command: ssh-copy-id
+The command ssh-copy-id uses ssh to copy the generated key over
+to the server, it will prompt you for the users password
+ssh-copy-id [-i identity_file] [-p port] [user@]hostname
+The identity file by default is the newest file that matches
+~/.ssh/id*.pub
+Example ssh-copy-id fiacobacci@php.scweb.ca
+21
+
+Scripting with SSH keys
+If you have configured SSH keys then scripting an SSH connection
+or transfer is easy because you simple call the SSH command
+Unless you added a passphrase to your key, so for scripting
+purposes do not add a passphrase to your key
+If you are not scripting any commands then for security reasons,
+you should have a passphrase on your key
+22
+
+Using multiple keys on a System
+If you have multiple SSH keys for your SSH client you can use
+~/.ssh/config to configure which key is used when
+This can be different based on a username and host combination
+Host php.scweb.ca
+Hostname php.scweb.ca
+IdentityFile ~/.ssh/id_rsa
+User root
+Host php.scweb.ca
+Hostname php.scweb.ca
+IdentityFile ~/.ssh/fiacobacci
+User fiacobacci
+23
+
+SSH Tunnels
+SSH tunnels can be used to connect to other hosts on a remote
+network
+For example you could connect to an RDP server that's only
+accessible internally through an externally available SSH server
+They can also be used to create a SOCKS proxy where you can
+route all traffic through an SSH server
+For example you can route all you web traffic through your SSH
+server
+24
+
+SSH Tunnels
+Command Description
+ssh -D 2001
+root@server.com
+Host a socks proxy on your local machine
+on port 2001 and route traffic through
+your SSH server
+ssh -L
+54000:10.13.37.2:3389
+root@server.com
+Host an SSH tunnel on port 54000 locally
+that routes to the RDP server at the
+remote network at 10.13.37.2
+ssh -R
+54000:172.16.2.4:3389
+root@server.com
+Host an SSH tunnel on port 54000 on the
+remote server that routes to 172.16.2.4
+locally
+25

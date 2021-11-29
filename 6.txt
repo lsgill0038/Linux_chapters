@@ -1,0 +1,401 @@
+Users, Groups and Permissions
+
+Objectives
+Describe a multi user setup
+Explain the benefits of a multi user
+Learn how to create and use Linux groups
+How to use file permissions effectively
+2
+
+Why have multiple users?
+Would you want an end user:
+to be able to shutdown your server?
+to install software that they want?
+overwrite system configuration files?
+What happens if your user account is compromised?
+Users can also be setup with user quotas to prevent any single user
+from taxing the available storage too much
+3
+
+Why have multiple users? (Continued)
+Similarly imagine running multiple services
+Would you want your apache server to have the same user
+account as your FTP server? No!
+Would you want your web server running as root? NO!
+Each service should have its own account and no service should run
+as root
+4
+
+Scenario
+Say you are running an FTP server, and one of your client accounts
+is compromised. What can the attacker see?
+The attacker can only see files and folders associated with that
+account
+The attacker can't modify any other services running on the
+server
+The attacker can't see files belonging to other clients
+5
+
+UID
+UID (User ID) is the unique identifier associated with a user
+account, in all cases this is a number
+the UID of root is 0
+sshd has a UID of 74
+/etc/passwd maps UID to user account names
+Numbers under 1000 are reserved for system users
+1000 and above are used for traditional user accounts
+6
+
+Username Best Practices
+Unix based operating systems are case sensitive
+You can also used mixed case in user names
+You can also use numbers, however do not!
+One of the systemd bugs (or "features") reads an account like
+"0day" as root when running services
+It is recommended that usernames remain all lower case
+Some applications can't read mix cased usernames
+All user accounts must be a single word
+Keep in mind usernames can be changed but UIDs cannot
+7
+
+/etc/login.defs
+The login.defs contains some default configuratoin required for
+Linux user accounts
+At minimum it requires
+MAIL_DIR = where mail is stored
+ENV_SUPATH = the super user path, where super user
+executables are located
+ENV_PATH = the default path where executables are located
+8
+
+/etc/passwd
+/etc/passwd contains all user information including:
+Username
+UID
+Primary Group GID
+Password indicator (look in /etc/shadow)
+User information
+Home directory
+Default Shell
+9
+
+/etc/shadow
+/etc/shadow contains password and login information including:
+Username
+yescrypt hashed password
+The date the password was last changed,based on days from
+epoch (Jan 1, 1970)
+Number of days before the password can be changed
+The amount of days before the password has to be changed
+The number of days the user will get a warning to change their
+password
+10
+
+/etc/skel
+The /etc/skel directory is the skeleton structure of new user
+accounts
+This folder is copied when a user account is created
+It's a good place to store default configuration files for users
+Default required directories
+Only root or sudo users can edit this directory
+11
+
+Adding Users
+The command to add users is useradd
+On debian based systems there is also a wizard style command
+called adduser
+Only root or sudo users can add users
+By default when a user is created a group is also created for that
+user with the same name
+Once a user account is created you'll have to set a password
+If a password is not set the user cannot login, however the user
+can be used for services
+How could that work? Let's think about it 
+12
+
+useradd
+useradd [options] login
+Command Description
+useradd -m franco Create the user account franco
+useradd -m -b /home2
+franco
+Create the user account franco with the
+home directory in /home2/franco
+useradd -m -c "Franco
+Iacobacci" franco
+Create the user account franco and add
+the comment Franco Iacobacci
+Note: default options stored in /etc/default/useradd 
+13 
+
+passwd
+passwd [options] [login]
+Command Description
+passwd
+Prompt to change the password for the current
+user
+passwd franco
+Prompts the user to enter a new password for
+franco (only works for root)
+passwd -e franco
+Make the user account franco expire
+immediately
+14
+
+chpasswd
+chpasswd [options]
+Used for scripting password updates. Ex:
+echo franco:"$tudent1!" | chpasswd
+This will update franco's password to $tudent1!
+15
+
+usermod
+usermod [options] user
+Command Description
+usermod -md
+/home3/franco
+franco
+Change the users franco's home directory to
+/home3/franco and move the current contents to
+the new directory
+usermod -l
+franco Lock the user account franco
+usermod -aG
+dev franco Add the dev group to franco
+16
+
+chfn
+chfn [-f full-name] [-o office] [-p phone] [-h h-phone] [username]
+Command Description
+chfn
+Open an interactive prompt to enter
+user information
+chfn -f "Franco
+Iacobacci" franco
+Assign the full name of Franco
+Iacobacci to franco
+chfn -o 68A franco Assign the office number 68A to franco
+17
+
+Groups
+In Linux, groups have a similar functions to groups in Windows
+Instead of assigning permissions to a directory or file based on
+users only, you can assign an entire group
+Remember all users of the wheel group are given sudo privileges
+Another example, if you a /accounting folder, you can assign an
+accounting group to have read and write access to that folder
+Each user has 1 primary group usually the same name as the user
+name
+User bob would have a group also named bob
+Users can be assigned multiple secondary groups 
+18
+
+GID: Group Identifier
+Configured in /etc/group file
+Users can belong to multiple groups
+GID of 0 is the root groups
+Normally you'll want to keep only root in this group
+Just like in UIDs, GIDs typically start at 1000 and go upwards
+999 and undeer are reserved for system level groups
+19
+
+Group passwords
+Linux groups can have passwords
+Passwords can be assigned using the gpasswd
+If an account has a password a user can join the group without an
+administrator using the newgrp command
+This procedure is inherently insecure due to the group password
+being shared with multiple users. Therefore this is not a
+recommended procedure
+20
+
+/etc/group
+/etc/group stores group information including:
+group name
+password indicator
+GID
+usernames of all the group members
+21
+
+/etc/gshadow
+/etc/gshadow stores the login and password information including:
+group name
+md5 hashed password
+the administor of the group
+usernames of the group members
+22
+
+groupadd
+groupadd [options] group
+Command Description
+groupadd student Create a group called student
+groupadd -r webserver Create a system group webserver
+groupadd -g 1001
+instructor
+Create the instructor group with the
+group id of 1001
+23
+
+gpasswd
+gpasswd [options] group
+Command Description
+gpasswd printers
+Prompt the user to create a password for the
+printers group
+gpasswd -a franco
+printers Add the user franco to the printers group
+gpasswd -d bob
+printers
+Remove the user bob from the printers
+group
+24
+
+newgrp
+newgrp [-] group
+root will not be prompted for a password, all other users will be
+Command Description
+newgrp developers
+Prompt the user for a password to join the
+developers group
+newgrp - developers
+Prompt the user for a password to join the
+developers group and re-initialize the user
+environment
+25
+
+File Permissions
+26
+
+Why have file permissions?
+Just like on Windows a lot of times you'll want to restrict access to
+files, foldres and executables
+Would you want each user to modify each others home directory?
+Would you want everyone to be able to run the shutdown
+command?
+27
+
+What permissions look like
+Recall running the ls -l command you see something like:
+drwxr-x--- 2 fiacobacci fiacobacci 4096 Feb 18 03:27 logs
+drwx--S--- 21 fiacobacci apache 4096 Feb 15 15:30 public_html
+-rw-r--r-- 1 fiacobacci fiacobacci 4578 Oct 30 11:37 tmux-client-3456.log
+The first column decribes all permissions, its always 10 characters
+Next the number of links to the file
+Then the username of the user owner
+Then the group name of the group owner 
+28
+
+Permission break down
+First of the 10 characters is the file type
+- means a regular file
+b block special
+d directory
+l symbolic link
+s socket
+p named pipe
+c character device file
+a device that appears as a regular file
+29
+
+Permission breakdown (continued)
+The next 9 character are broken into 3 groups of 3
+User permissions - based user owner
+Group permissions - based on group owner
+Other permissions - all other users
+Each 3 is broken into:
+r which is read
+w which is write
+x which is execute
+30
+
+Directory permission breakdown
+Directory permissions are different from file permissions,
+obviously a directory can't be executed
+r - Permits the listing of files within the directory
+w - Permits creation, renaming, deleting files within the
+directory, and modifying the directory's attributes
+x - Permits directory entry, and access to the files and subdirectories inside
+Directories need the x permission to be usable
+31
+
+Permissions Numeric
+The user, group and other permissions can also be represented
+numerically, through 3 sets of 3 bits which are added together
+r = 4
+w = 2
+x = 1
+For example:
+rw-r--r-- = 644
+rwx------ = 700
+rwxrw-r-- = 764
+rwxrwxrwx = 777
+32
+
+Permission Examples
+-rw-r--r-- = A file in which the user owner can read or write but
+not execute, the group can read and everyone else can also read
+the file
+drwx------ = A directory in which the user owner can list the files,
+create and modify files, and change into the directory, no one else
+can use the directory
+-rwxr----- = A file the user can read, write and execute the file,
+the group can read the file and other users can't view the file
+33
+
+Special Permissions SUID,GUID
+There are also special permissions for files
+On a file this means execute the file as the user owner or the
+group owner depending on which sticky bit is set
+Note: Scripts cannot have a sticky bit this has to be a program
+created and compiled
+Example: passwd, runs as root even when a regular user calls
+it
+When assigning permissions with chmod it would be u+s or
+g+s (more on this shortly)
+34
+
+Sticky Bit
+The special permissions for a directory are different
+The user bit has no effect
+The group bit will have the group owner of files and folders in
+the directory created with the same group owner as the
+directory
+The other bit will only allow deletion of a file from the original
+owner (or of course root)
+35
+
+Commands
+File and folder permissions can be changed with chmod
+Stands for change mode
+Used in conjunction with numeric or character permissions
+The user and group owners can be changed with chown
+Stands for change owner
+36
+
+chmod
+chmod [options]... mode[,mode]... file...
+chmod [options]... numeric_mode file...
+Command Description
+chmod 777 file
+Set read, write and execute to everyone on
+file
+chmod ugo+rwx folder
+Add read, write an execute to user, group
+and other
+chmod +r,u+wx file
+Add read to everyone, and write and
+execute to user
+37
+
+chown
+chown [options] [owner][:[group]] file
+Command Description
+chown franco file Change the user to franco on file
+chown franco:www folder
+Change the user to franco and the group
+to www
+chown :www folder Change the group of the folder to www
+chown franco: file
+Change the user to franco and the group
+to the primary group of franco
+38

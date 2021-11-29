@@ -1,0 +1,397 @@
+Apache & PHP
+
+Objectives
+Learn about the Apache Web Server
+Learn about vhosts
+Learn how to configure the firewall on Debian
+Learn about LetsEncrypt certificates
+2
+
+Apache
+What is Apache?
+An open source Web Server
+Runs on Linux, Windows, and Mac OS
+It is considered very secure, fast and reliable
+Apache supports several server side scripting languages
+Most notably PHP
+Apache also supports a variety of mods
+Default port is 80 for http and 443 for https
+3
+
+Multi-Processing Modules (MPMs)
+What is an MPM?
+MPMs are used to bind to network ports, accept requests, and
+dispatch child processes to handle the requests
+Since apache is modular it comes with multiple MPM options, these
+are also based on the capability of the operating system
+See https://httpd.apache.org/docs/2.4/en/mpm.html for more
+detail
+4
+
+apache2
+The package and service name on Debian for apache is apache2
+Configuration files by default are in:
+/etc/apache2/
+All configuration files are plain text files
+Log files are located in /var/log/apache2/ by default
+access_log - contains information about people who access your website
+error_log - contains error information about failed attempts to
+access your website
+5
+
+apache2.conf
+By default the document root is in /var/www.html
+DocumentRoot /var/www/html - in apache2.conf
+By default apache will look for an index.html page to display when
+the user navigates to the root of your website
+Apache by default blocks all files (includes sub directories):
+# Block all by default
+<Directory />
+AllowOverride none
+Require all denied
+</Directory>
+6
+
+apache2.conf (continued)
+You have to allow individual directories:
+<Directory "/var/www/html">
+Options Indexes FollowSymLinks
+AllowOverride None
+Require all granted
+</Directory>
+You can also block specific files:
+<Files ".ht*">
+Require all denied
+</Files>
+7
+
+apache2.conf (continued)
+You can specify additional optional configuration files with the
+IncludeOptional
+IncludeOptional sites-available/*.conf
+Custom error Documents
+ErrorDocument 404 /missing.html
+8
+
+vhosts (sites)
+What are vhosts?
+A vhost is a virtual host, this allows you to host multiple
+websites on the same server
+for example you can host api.example.com and
+www.example.com using the same server
+you can even host different domains like test.com and
+notatest.com
+Each vhost will have a separate configuration, and are usually
+located in different directories
+9
+
+vhost (site) config
+<VirtualHost *:80>
+ServerName example2.com
+DocumentRoot /var/www/example2.com/html/
+ErrorLog /var/log/apache2/error_log_ex2
+CustomLog /var/log/apache2/access_log_ex1 common
+</VirtualHost>
+<VirtualHost *:80>
+ServerName example1.com
+DocumentRoot /var/www/example1.com/html/
+ErrorLog /var/log/apache2/error_log_ex1
+CustomLog /var/log/apache2/access_log_ex1 common
+</VirtualHost>
+10
+
+vhost (site) config continued
+<Directory /var/www/example2.com/html/>
+Require all granted
+</Directory>
+11
+
+Starting and Stopping
+You can use systemd tools to start and stop the apache server
+systemctl start apache2 - start the service now
+systemctl enable apache2 - have the service start at system
+startup
+systemctl stop apache2 - stop the service
+systemctl restart apache2 - restart the service
+systemctl reload apache2 - reload is supported by apache2,
+this means it will reload the configuration without stopping the
+server
+12
+
+apachectl
+Apache also comes with its own tool called apachectl
+Command Description
+apachectl start Start the server
+apachectl stop Stop the server
+apachectl restart Restart the server
+apachectl configtest Test the syntax of the configuration
+apachectl status Display a brief status of the server
+apachectl fullstsatus Display full status report from mod_status
+13
+
+a2enmod and a2dismod
+Apache on debian also comes with its own tool for
+enabling/disabling modules
+a2enmod {module} and a2dismod {module}
+Command Description
+a2enmod ssl
+Enable the ssl module on apache2 by creating
+symlinks from mods-available in mods-enabled
+a2dismod ssl
+Disable the ssl module on apache2 by removing
+symlinks from mods-enabled
+14
+
+a2ensite and a2dissite
+Apache on debian also comes with its own tool for
+enabling/disabling sites(vhosts)
+a2ensite {site conf} and a2dissite {site conf}
+Command Description
+a2ensite
+iacobacci.com.conf
+Enable the iacobacci.com.conf site on apache2
+by creating symlinks from sites-available in
+sites-enabled
+a2dissite
+iacobacci.com.conf
+Disable the iacobacci.com.conf module on
+apache2 by removing symlinks from sitesenabled 
+15
+
+a2enconf and a2disconf
+Apache on debian also comes with its own tool for
+enabling/disabling specific configurations
+a2enconf {conf} and a2enconf {conf}
+Command Description
+a2enconf security.conf
+Enable the security.conf site on apache2
+by creating symlinks from confavailable in conf-enabled
+a2disconf security.conf
+Disable the security.conf module on
+apache2 by removing symlinks from
+conf-enabled 
+16
+
+SSL/TLS Support
+Apache supports SSL/TLS and HTTPS
+First you must enable the SSL mod using apt a2enmod ssl
+Next you'll need to obtain a certificate
+Then configure you Protocol and Cipher Suites
+17
+
+default-ssl.conf and ssl.conf
+Setting a certificate (more on getting one later):
+SSLCertificateFile /etc/letsencrypt/live/iacobacci.ca/fullchain.pem
+SSLCertificateKeyFile /etc/letsencrypt/live/iacobacci.ca/privkey.pem
+Set SSL ciphers
+SSLProtocol all -SSLv3
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+SSLHonorCipherOrder on
+18
+
+Certificates
+There are 3 ways to get certificates
+Generate your own, however this won't be a valid verifiable
+certificate, and browsers will warn you the site is insecure
+Purchase a certificate
+Use a Let's Encrypt certificate
+Remember just like SSH, the private certificate MUST remain
+secure and private
+19
+
+Let's Encrypt
+Let's encrypt provides free HTTPS certificates
+They have to be renewed about every 3 months
+There are some limitations on how many certificates each account
+and domain can have
+Let's Encrypt does not verify the owner of the certificate outside of
+the domain
+To get a certificate through Let's Encrypt using the program
+certbot is highly recommended
+https://certbot.eff.org/
+yum install certbot
+20
+
+HTTP/2
+HTTP/2 is the newest version of HTTP
+it is a binary protocol rather then plain text (HTTP/1.1)
+HTTP/2 support multiple streams simultaneously
+Apache has mod_http2 in order to implement HTTP/2
+HTTP/2 is not compatible with all MPMs so be careful with your
+configuration!
+21
+
+PHP
+What is PHP?
+PHP: Hypertext Preprocessor is a server side scripting language
+These script are executed generally to produce dynamic content
+for a website
+PHP supports many databases (MySQL, MSSQL, Oracle, DB2,
+Generic ODBC)
+Support OOP and structural programming
+22
+
+Install and Using PHP
+In order to install PHP
+apt install php php-mysql libapache2-mod-php
+The php packages comes with the required configuration for
+apache to read php files. An apache reload will be required.
+Once PHP is operation you can then create a script to see your
+PHP info
+<?php
+phpinfo();
+?>
+23
+
+PHP at runtime
+When a PHP file is navigated to, apache will call PHP to run the
+script
+Since PHP is an interpretive language it will read the file and
+interpret with each run (no compilation required)
+The script will run as the user the apache server is running as
+24
+
+php.ini
+The PHP configuration file is located in
+/etc/php/{version}/{application}/php.ini
+Some of the common configuration changes you might want to edit
+include:
+upload directory
+global variables
+max uploading size
+max script execution time
+25
+
+php.ini (continued)
+error_reporting
+Default Value: E_ALL & ~E_NOTICE
+Development Value: E_ALL | E_STRICT
+Production Value: E_ALL & ~E_DEPRECATED
+html_errors
+Default Value: On
+Development Value: On
+Production value: Off
+26
+
+p
+h
+p
+.
+i
+n
+i
+(
+c
+o
+n
+t
+i
+n
+u
+e
+d
+) log_errors Default Value: Off Development Value: O
+n
+P
+r
+o
+d
+u
+c
+tio
+n
+V
+alu
+e: O
+n
+dis
+pla
+y
+_
+e
+r
+r
+o
+r
+s
+D
+e
+f
+a
+ult
+V
+alu
+e: O
+n
+D
+e
+v
+elo
+p
+m
+e
+n
+t
+V
+alu
+e: O
+n
+P
+r
+o
+d
+u
+c
+tio
+n
+V
+alu
+e: O
+f
+f
+E
+x
+a
+m
+ple, dis
+pla
+y
+_
+e
+r
+r
+o
+r
+s
+=
+O
+n
+27
+
+Firewall
+By default Linux comes with a firewall called iptables
+iptables has a lot of options:
+Including when packets will be analyzed (ex. prerouting,
+postrouting, input, output, forward)
+how to filter them and what do to with them
+However all the options of iptables makes it complicated to use so
+instead we use a command called firewalld and firewall-cmd to
+configure the basics
+firewalld must be installed with apt install firewalld
+28
+
+firewall-cmd
+Command Description
+firewall-cmd --permanent --addport=80/tcp
+Open TCP port 80
+permanently
+firewall-cmd --permanent --addservice=https
+Open port(s) for https
+permanently
+firewall-cmd --permanent --removeport=443/tcp
+Closes TCP port 443
+permanently
+firewall-cmd --reload
+Reload the firewall
+configuration
+29

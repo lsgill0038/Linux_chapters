@@ -1,0 +1,266 @@
+MariaDB/MySQL
+
+Objectives
+Learn about MariaDB and MySQL
+Learn how to create users in MariaDB
+Learn how to create Databases in MariaDB
+Review SQL
+Learn how to backup a database
+2
+
+MySQL & MariaDB
+What is MySQL?
+MySQL is an open source relational database management
+system
+It uses a multithreaded design approach
+MySQL was purchased by Oracle, and since it was
+trademarked it was then forked (meaning the code was taken
+to create a new project)
+The MySQL fork is called MariaDB
+In our labs we are going to use MariaDB
+3
+
+Why use a RDBMS?
+Historically we used flat files to store data
+Flat files are simply text files with forced column widths
+Searching through a flat file was particularly slow, especially
+reading a whole file to process the data
+So relational databases were created for speed and efficiency
+Relationally databases increase efficiency through properly
+user defined tables, indexed by primary keys
+Tables can be linked together with foreign keys
+4
+
+Why use MySQL/MariaDB?
+It has superior performance when compared to other opensource
+RDBMS like PostgreSQL and SQLite
+It is well supported by its open source community
+No license fees
+Proprietary DB license fees are usually substantial (like DB2,
+Oracle, or MSSQL)
+It is lightweight while offering a full feature set
+5
+
+What is SQL?
+SQL is a common standard used by most relational databases
+It is used to create, update and retrieve information from a
+relational database
+SQL has a very particular syntax, however most relational
+database add a few extra features that are non-standard
+For example: MySQL has REPLACE
+Commonly referred to as Structured Query Language
+6
+
+SQL
+SQL is declarative - you describe what you want and the
+database will determine how to do it
+SQL is interactive - you issue SQL commands directly to your
+database management system and it displays the results
+SQL can also be embeded - you can embed SQL statements into
+a scripting or programming language like BASH, PHP or Java
+SQL is standardized - no one owns it, but it is a standard that is
+defined by an international standards working group
+7
+
+What makes up a RDBMS?
+A database is generally made up of multiple schemas
+Schemas contain multiple tables
+Note: In MySQL a database and schema are the same both
+contain tables
+A table contains columns and rows (records)
+8
+
+Columns
+Each column represents a specific attribute or property of the
+table's entity type
+Each column has a domain (set of constraints) that include
+restrictions on a value's datatype, length, range, uniqueness,
+specific values and nullability (can be null or not)
+Entries in columns are single valued
+Order of columns is unimportant
+Each column has a name that ID's it uniquely within a table
+Column definitions rarely change
+9
+
+Rows (Records)
+Each row describes an entity
+Each column in the row contains a value based on the column
+constraints for the entity
+In a properly designed database, no 2 rows should be the same
+Each row should be identified by a unique primary key
+Rows frequently change
+The cross-section of columns and rows create Fields
+Fields are a single value!
+10
+
+Primary Key - Introduction
+Each table should have exactly one primary key
+Each record must have a unique primary key ID
+A primary key can be made up of a single column or multiple
+columns
+A primary key cannot be null
+11
+
+mariadb
+In order to install MariaDB you'll need to run
+apt install mariadb-client, mariadb-server
+The service name will still be mariadb
+The service will call the command mysqld
+The client is the mysql command
+Generally speaking we don't want to open the database to
+external access so make sure the database is behind some kind
+of firewall whether external or iptables
+12
+
+Securing MySQL
+Run the command mysql_secure_installation to be prompted to
+secure your database installation
+Set root password
+Not to be confused with the system root password, MySQL
+has it's own root user
+Remove Anonymous users
+Disallow root login remotely
+Remove Test Database
+13
+
+MySQL shell
+You must log into the MySQL shell to:
+Create Databases/Schemas
+Create Users
+Grant/Revoke privileges
+Create/Update/Drop tables
+Insert/Update/Delete records
+Query records for information
+14
+
+Command: mysql
+Command Description
+mysql
+Login to the database at localhost
+on the default port as root with no
+password
+mysql -u bob -p"drowssap"
+Login to the local database as user
+bob with the password drowssap
+mysql -u bob -p"drowssap"
+--host=php.scweb.ca --
+port=3306
+Login to the MySQL server on
+php.scweb.ca on port 3306
+15
+
+Creating Databases/Schemas
+Recall Databases and Schemas are the same in MySQL
+In order to create a database we would use:
+CREATE DATABASE mit416;
+In CLI client:
+mysql> CREATE DATABASE mit416;
+16
+
+Creating Users
+To create the user student available on localhost with the
+password of test1
+CREATE USER 'student'@localhost IDENTIFIED BY 'password';
+You can use different hosts and a wildcard to allow connections
+/* Allow users from any host */
+CREATE USER 'student'@'%' IDENTIFIED BY 'password';
+/* Allow users from any host that ends with scweb.ca */
+CREATE USER 'student'@'%.scweb.ca' IDENTIFIED BY 'password';
+/* Allow users from any IP that starts with 192.168 */
+CREATE USER 'student'@'192.168.%.%' IDENTIFIED BY 'password';
+17
+
+Granting Privileges
+Now that we've created users and databases we want to grant
+privileges to those users
+/* Grant all privileges to student for the database mit416 and its tables */
+GRANT ALL PRIVILEGES ON mit416.* to student@localhost
+/* Grant read privileges to student on exampledb */
+GRANT SELECT ON exampledb.* to student@localhost
+Granting all permissions on a database provides all privileges to
+functions and tables
+More info here: https://mariadb.com/kb/en/library/grant/
+18
+
+Viewing Users
+To view users on a MySQL database
+SELECT user,host,password FROM mysql.user;
+MariaDB [(none)]> SELECT user,host,password FROM mysql.user where user='fiacobacci';
++------------+------+-------------------------------------------+
+| user | host | password |
++------------+------+-------------------------------------------+
+| fiacobacci | % | *451559073555104A841F0DEFEBCE26CEC5617D7F |
++------------+------+-------------------------------------------+
+1 row in set (0.001 sec)
+19
+
+Viewing Privileges
+To view privileges on a MySQL database
+SHOW GRANTS FOR fiacobacci@localhost
+MariaDB [(none)]> SHOW GRANTS FOR fiacobacci;
++------------------------------------------------------------+
+| Grants for fiac |
++------------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'fiacobacci'@'%' IDENTIFIED BY
+PASSWORD '*451559073555104A841F0DEFEBCE26CEC5617D7F' |
+| GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP,
+REFERENCES, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES,
+EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE,
+EVENT, TRIGGER ON `fiacobaccidb`.* TO 'fiacobacci'@'%' |
++------------------------------------------------------------+
+20
+
+Creating Tables
+Creating and employee table
+CREATE TABLE employee(
+ id INT NOT NULL AUTO_INCREMENT,
+ firstname VARCHAR(20),
+ lastname VARCHAR(20),
+ department VARCHAR(20),
+ PRIMARY KEY (id)
+);
+Remove tables
+DROP TABLE employee;
+21
+
+Inserting/Updating/Deleting Records
+You can Create records using INSERT INTO , modify them with
+UPDATE and remove them with DELETE FROM
+/* Create a record */
+INSERT INTO employee VALUES (DEFAULT,"Franco", "Iacobacci", "Networking");
+/* Modify the record */
+UPDATE employee SET department="IT" WHERE id=1;
+/* Delete the record */
+DELETE FROM employee WHERE id=1;
+22
+
+Viewing data from a Database
+In order to view data you can use SELECT
+/* Select all records from employee */
+SELECT * FROM employee
+/* Select all records with the first name Bob */
+SELECT * FROM employee WHERE firstname='Bob'
+/* Select all records and order by the ID */
+SELECT * FROM employee ORDER BY id
+23
+
+Exporting a MySQL Database
+In order to export a MySQL database you can run the following
+command
+mysqldump -u username -p"password" database_name > File.sql
+Replace username, password and database_name with your
+MySQL username, password and database name. FILE.sql now
+holds a backup of your database.
+24
+
+Resetting the root password
+Don't forget your root password!!!!!
+OK in case you do:
+1. Stop the mysqld service
+2. Run mysqld_safe --skip-grant-tables &
+3. Login to mysql shell using mysql
+4. Update forgotten password using (see code below)
+5. Restart service
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'newpassword';
+FLUSH PRIVILEGES;
+25
