@@ -1,0 +1,208 @@
+Content Management Systems
+Objectives
+Learn about PHPMyAdmin
+Learn about Content Management Systems
+Learn about Wordpress
+Learn how to setup Wordpress
+Learn about alternative CMSs
+2
+
+Content Management System
+What is a Content Management System (CMS)?
+An application:
+That supports creation and modification of digital content
+Often used to support multiple users working in a
+collaborative environment
+That supports the management of the content of Web Pages
+Web Content can include, text embedded graphics, photos,
+videos, audio, maps, program code
+3
+
+Why use a CMS?
+CMS's take the modification of a website content out of developers
+hands and puts it in the hands of users
+Imagine owning a store and having to hire a developer to update
+inventory every day, that would be expensive
+CMS's also allows users to follow templates
+Usually has built in analytics or an extension for analytics
+Usually is secure, or is more thoroughly tested due to the mass
+usage
+4
+
+What makes up a CMS?
+Typically CMS's have 2 major components
+A Content Management Application (CMA)
+The CMA is the front-end user interface that allows a user,
+even with limited expertise to add, modify and remove
+content from a website without intervention from a
+webmaster or developer
+A Content Delivery Application (CDA)
+The CDA is the back end which delivers the content to the
+content consumers (ex. customers)
+5
+
+WordPress
+WordPress is an open source CMS
+Coded with PHP and supports MySQL or MariaDB
+A good starting point to develop websites that need constant
+updating
+Can be extended with thousands of plugins
+WordPress was used by about 40% of the top 10 million
+websites as of 2021
+Up from 27.5% in 2017
+6
+
+WordPress (continued)
+Some downsides to WordPress:
+WordPress is a huge, complicated application
+There are constant security updates that must be applied
+WordPress is a large attack target due to its popularity
+Too many choices for plugins and themes. It can be difficult to
+choose the best quality plugins and themes.
+Plugins are not as reliable or secure as the base application
+7
+
+How to setup WordPress
+Since we already have Apache setup
+1. Download the latest version using
+wget http://wordpress.org/latest.tar.gz
+2. Extract the downloaded WordPress file to the hosted folder
+using tar xzvf latest.tar.gz
+3. Create a database in MariaDB for WordPress (ex. WordPress)
+4. Create an user account in MariaDB and give permission to your
+Database
+8
+
+How to setup WordPress continued
+5. ./wordpress/wp-config-sample.php to ./wordpress/wp-config.php
+6. Update the wp-config.php file with the correct values in Database
+Name, Database User, and Database Password:
+define('DB_NAME', "WordPress");
+define('DB_USER', "wpuser");
+define('DB_PASSWORD', "password");
+9
+
+How to setup WordPress continued
+7. Create 2 folders called uploads and cache
+./wordpress/wp-content/uploads
+./wordpress/wp-content/cache
+8. Change the owner of the 2 directories created to apache using
+chown apache:apache ./wordpress/wp-content/uploads
+chown apache:apache ./wordpress/wp-content/cache
+9. Restart Apache.
+10
+
+PHPMyAdmin
+PHPMyAdmin is an opensource software tool written in PHP
+It is intended to handle administration of a MySQL or MariaDB
+server through a web application
+It allows you to execute SQL statements as client to a MySQL or
+MariaDB server
+Frequently used operations (managing databases, tables, columns,
+relations, indexes, users, permissions, etc.)
+It can be significantly slower then command line to execute SQL
+statements, however has an efficient interface from a usage
+standpoint
+11
+
+Installing PHPMyAdmin
+1. Copy the latest link from https://www.phpmyadmin.net/
+2. Use wget to download the package
+3. Extract the zip file using unzip to the location where it will be
+hosted by apache (ex. the DocumentRoot of a vhost)
+When installing PHPMyAdmin to a server consider adding it to a
+server that is only internally accessible as it is database
+management software
+If there is a bug that causes unauthorized access, you'll want to
+minimize the risk
+12
+
+Alternative CMS: Joomla
+Can be found here: https://www.joomla.org/
+Joomla is also PHP based
+It's coded to work with MySQL, PostgreSQL, MSSQL, SQLite
+It has search engine optimization
+It supports extensions similar to WordPress
+Represents about 3% of the websites on the internet
+13
+
+Alternative CMS: concrete5
+Can be found at: https://www.concrete5.org/
+concrete5 is also coded in PHP
+Supports MySQL, and MariaDB
+It supports versioning for every page
+Meaning it's easy to rollback if needed
+Supports a drag and drop style of website creation
+14
+
+Alternative CMS: Drupal
+Can be found at: https://www.concrete5.org/
+Drupal is also coded in PHP
+Supports MySQL, MariaDB, PostgreSQL, MSSQL, SQLite, Oracle
+Drupal usually requires some developer intervention at first,
+however in the long term scales better then a WordPress web
+application
+Drupal generally provides a more robust but complex interface
+15
+
+Other languages
+So far we've talked about CMS's that are all coded in PHP
+However there are CMS's coded for other types of web servers like
+Java or node.js based servers
+There are even hosted only CMS's like Wix, which can only be used
+in the cloud
+16
+
+Alternative CMS: Wix
+Can be found: https://www.wix.com/
+Wix cannot be internally hosted, you must host it on Wix Servers
+Very user friendly interface to create website
+Has advanced feature set for those who require a more robust
+solution
+17
+
+Alternative CMS: ghost.js
+Can be found at: https://ghost.org/
+ghost.js is coded with node.js
+It has some integrations
+It is designed to be a blogging platform
+Search Engine Optimization and social features are built in
+18
+
+Other Language Servers
+Recall from our Apache Web Server lesson, Apache will bind to the
+port and listen for requests.
+Then using a PHP mod apache will be able to handle PHP pages by
+calling PHP as a child to apache
+Node.js on the other hand will bind to the port itself and node.js
+will handle the Web Requests
+Java operates similar to node.js in that it also binds to the port and
+handles the web requests
+Since both Java and node.js are less tested and robust they are
+more prone to bugs
+19
+
+Apache Reverse Proxies
+If you need to host a less secure server, but don't want it directly
+front facing, you can use Apache to host a reverse proxy
+OR if you need more then one type of server hosted on the same
+machine, for example both a Java and node.js server
+First you would setup your other server to run on a different port,
+usually above 1024 so it doesn't require root (ex. 50080)
+Then you'll configure a vhost on apache to point to the other
+server
+You can then setup multiple reverse proxies on the same machine if
+required
+20
+
+Apache Reverse Proxies (continued)
+The VirtualHost config should look like:
+<VirtualHost *:80>
+ServerName java.example.com
+ProxyPreserveHost On
+ProxyPass / http://127.0.0.1:50080/
+ProxyPassReverse / http://127.0.0.1:50080/
+</VirtualHost>
+Keep in mind the destination server doesn't have to be localhost, it
+could be located anywhere the server can reach
+21
