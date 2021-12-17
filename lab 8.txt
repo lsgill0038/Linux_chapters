@@ -1,0 +1,66 @@
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+  
+Student Name: 	 	Student Number: 	 
+ 
+ 
+ 
+  	 	 
+10 
+SSH  	 	 	 	 	 	 	 	 	 	 
+ 
+Part 1: Configuring SSH  	 	 	 	 	 	 	 	 	[2 marks] 
+ 
+1.	Create an account on your Linux VM called sshact make sure they have a home directory and you set their shell to /bin/bash. 
+Ans: useradd -n -s /bin/bash sshact
+2.	From your windows host using putty or another SSH client login to the sshact you just created.
+Ans: sftp sshact@localhost 
+3.	Using vim create a file in sshact’s home directory, in the file write your favourite color. 
+ANS. Vim blue 
+ 
+ 
+ 
+Part 2: Using SFTP GUI 	 	 	 	 	 	 	 	 	 	[2 Marks] 
+1.	Use the sftp command to connect to your sshact on your local host sftp sshact@localhost. 
+ANS.  sftp sshact@localhost.
+
+2.	Now download the color file you created in part 1.4 
+ANS. Put sshact
+         Put blue
+  
+Part 3: Using SSH Client  	 	 	 	 	 	 	 	 	[2 Marks] 
+1.	On your Linux VM use the command ssh to login to php.scweb.ca like so ssh {username}@php.scweb.ca use your user account from your php class (or if you don’t have one ask your instructor). 
+Ans: ssh f21aab@php.scweb.ca  
+2.	Create a file on scweb called lab7.3 and enter your first and last name into it. 
+Ans: vim lab7.3
+3.	Now type exit to log out (or press Ctrl + D) 
+4.	Now use the scp command to copy the file from the remote destination to your local VM 
+Ans: scp f21aab@php.scweb.ca:~/lab7.3 home
+5.	Now log into scweb using sftp {username}@php.scweb.ca and use the put {filename} command to upload the modified file back to scweb. 
+Ans: sftp f21aab@php.scweb.ca
+ 
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci W2021 	 	 	Page 1 
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+ 
+Part 4: Creating a key Authentication  	 	 	 	 	 	 	[2 Marks] 
+1.	Generate an SSH Key using ssh-keygen follow the prompts 
+ANS: ssh-keygen
+2.	Once the key is created use ssh-copy-id {username}@php.scweb.ca, use the account you use for PHP, if you don’t have one then ask your instructor for an account. 
+ANS: ssh f21aab@php.scweb.ca
+3.	Next try to ssh to that account using ssh {username}@php.scweb.ca 
+Part 5: Scripting ssh 	 	 	 	 	 	 	 	 	 	[2 Marks] 
+1.	Create a script using ssh that will append the date to a file called ~/public_html/lab5.1.html 
+Remember the date command can be used to display the date 
+Remember ssh {user}@{host} {command} notice the command option you can run a single command with ssh  
+The script should be located on your VM. 
+ANS: ssh f21aab@php.scweb.ca “date   >>  ~/public_html/lab5.1.html”
+2.	Run the script a couple of times and navigate to it user your browser by going to {username}.scweb.ca/lab5.1.html 
+ 
+ 
+HAVE YOU INSTRUCTOR MARK YOU LAB, THEN SHUTDOWN YOUR VIRTUAL MACHINE 
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci W2021 	 	 	Page 2 

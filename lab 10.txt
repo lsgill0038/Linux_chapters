@@ -1,0 +1,91 @@
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+  
+	Student Name: 	 	Student Number: 	 
+ 
+ 
+MariaDB  	 	 	 	 	 	 	 	 	 	  	 	 
+	 	10 
+Part 1: Installing httpd, and mariadb  	 	 	 	 	 	 	[1 Marks] 
+1.	Install mariadb-client,  mariadb-server 
+Ans: apt install mariadb-client
+2. apt install mariadb-server
+2.	Next we want to make sure the mariadb service start at system start, use systemctl. 
+ 
+Part 2: Configuring you MariaDB Server 	 	 	 	 	 	 	[9 Marks] 
+1.	Secure your MariaDB installation by running the command mysql_secure_installation.  Following the prompts and add a password to the root user, remove anonymous users, don’t allow remote login for root and delete test databases, 
+Ans: mysql_secure_installation
+	n
+	n
+	y
+	y
+	y
+	y
+	
+2.	Next login to your MariaDB shell, using mysql -u root -p this will prompt your for the password created in step 1. 
+Ans: mysql -u root -p
+3.	Next create a developer user for your database using CREATE USER ‘{username}’@’localhost’ IDENTIFIED BY ‘{password}’; - as always curly bases indicate replace with your own values. 
+Ans: CREATE USER 'developer'@localhost IDENTIFIED BY 'password';
+4.	Next create a wwwprod database on your server using CREATE DATABASE wwwprod; 
+Ans: CREATE DATABASE wwwprod;
+5.	Next give the developer user all privileges to the database using GRANT ALL PRIVILEGES ON wwwprod.* to {username}@localhost  
+Ans: GRANT ALL PRIVILEGES ON wwwprod.* to developer@localhost;
+6.	Next create wwwuser user for MariaDB, and grant all privileges to wwwprod. 
+Ans: CREATE USER 'wwwuser'@localhost IDENTIFIED BY 'password';
+   GRANT ALL PRIVILEGES ON wwwprod.* to wwwuser@localhost;
+7.	Next create another database called testwww{username} where username is replaced by the users you created in step 3 and again grant all permissions to the database. 
+Ans: CREATE DATEBASE testwwwdeveloper;
+8.	Finally create 2 more developer users and test databases for each.  Give them all privileges on production (wwwprod) and only their own test database.  
+ANS: CREATE USER 'user1'@localhost IDENTIFIED BY 'password';
+   CREATE USER 'user2'@localhost IDENTIFIED BY 'password';
+   CREATE DATABASE user1;
+   CREATE DATABASE user2;
+   GRANT ALL PRIVILEGES ON wwwprod.* to user1@localhost;
+   GRANT ALL PRIVILEGES ON wwwprod.* to user2@localhost;
+   GRANT ALL PRIVILEGES ON user1.* to user2@localhost;
+   GRANT ALL PRIVILEGES ON user2.* to user2@localhost;
+9.	Verify your configuration with:  
+a.	SELECT user,host,password FROM mysql.user; 
+b.	SHOW GRANTS FOR ‘{username}’@localhost 
+10.	Next create a database of your choice. 
+ANS: CREATE DATABASE new_name;
+use new_name;
+11.	Create 2 tables of your choosing in that database.  Make sure each table has at least 5 fields. 
+ANS:  use new_name;
+    CREATE TABLE table_name (
+	id INT NOT NULL AUTO_INCREMENT,
+	firstname VARCHAR(50),
+	lastname VARCHAR(50),
+	department VARCHAR(50),
+	salary INT,
+	PRIMARY KEY (id)
+    );
+    CREATE TABLE table_name_2 (
+	id INT NOT NULL AUTO_INCREMENT,
+	firstname VARCHAR(50),
+	lastname VARCHAR(50),
+	department VARCHAR(50),
+	salary INT,
+	PRIMARY KEY (id)
+    );
+
+12.	Insert 2 records to each table. 
+ANS.  INSERT INTO table_name VALUES (DEFAULT, "insert", "insert", "insert", value);
+    INSERT INTO table_name VALUES (DEFAULT, "insert", "insert", "insert", value);
+
+    INSERT INTO table_name_2 VALUES (DEFAULT, "insert", "insert", "insert", value);
+    INSERT INTO table_name_2 VALUES (DEFAULT, "insert", "insert", "insert", value);
+
+
+13.	Next create a user account with your name, and grant permissions to the database you have just created. 
+ANS.  CREATE USER 'Your_Name'@localhost IDENTIFIED BY 'password';
+    GRANT ALL PRIVILEGES ON new_name.* TO Your_name@localhost;
+
+
+14.	Export the database using (do this from the bash terminal) mysqldump -u {youname} -p{password} {databaseName} > {databaseName}.sql 
+ANS.   mysqldump -u YourName -p"password" database_name > database_name.sql
+ 
+HAVE YOU INSTRUCTOR MARK YOU LAB, THEN SHUTDOWN YOUR VIRTUAL MACHINE 
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci F2021 	 	 	Page 1 

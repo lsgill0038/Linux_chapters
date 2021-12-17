@@ -1,0 +1,776 @@
+
+
+Why have multiple users?
+
+Would you want an end user:to be able to shutdown your server?
+to install software that they want?
+overwrite system configuration files?
+
+
+What happens if your user account is compromised?
+
+Users can also be setup with user quotas to prevent any single userfrom taxing the available storage too much 
+
+
+
+
+Why have multiple users? (Continued)
+Similarly imagine running multiple servicesWould you want your apache server to have the same useraccount as your FTP server? No!
+Would you want your web server running as root? NO!
+
+Each service should have its own account and no service should runas root 
+
+
+
+
+Scenario
+Say you are running an FTP server, and one of your client accountsis compromised. What can the attacker see?The attacker can only see files and folders associated with thataccount
+The attacker can't modify any other services running on theserver
+The attacker can't see files belonging to other clients 
+
+
+
+
+UID
+UID (User ID) is the unique identifier associated with a useraccount, in all cases this is a numberthe UID of root is 0
+sshd has a UID of 74
+
+/etc/passwd maps UID to user account names
+Numbers under 1000 are reserved for system users
+1000 and above are used for traditional user accounts 
+
+
+
+Username Best Practices
+Unix based operating systems are case sensitiveYou can also used mixed case in user names
+You can also use numbers, however do not!One of the systemd bugs (or "features") reads an account like"0day" as root when running services
+
+
+It is recommended that usernames remain all lower caseSome applications can't read mix cased usernames
+
+All user accounts must be a single word
+Keep in mind usernames can be changed but UIDs cannot 
+
+
+
+/etc/login.defs
+The login.defs contains some default configuratoin required forLinux user accounts
+At minimum it requiresMAIL_DIR = where mail is stored
+ENV_SUPATH = the super user path, where super userexecutables are located
+ENV_PATH = the default path where executables are located 
+
+
+
+
+/etc/passwd
+/etc/passwd contains all user information including:Username
+UID
+Primary Group GID
+Password indicator (look in /etc/shadow)
+User information
+Home directory
+Default Shell 
+
+
+
+
+/etc/shadow
+/etc/shadow contains password and login information including:Username
+yescrypt hashed password
+The date the password was last changed,based on days fromepoch (Jan 1, 1970)
+Number of days before the password can be changed
+The amount of days before the password has to be changed
+The number of days the user will get a warning to change theirpassword 
+
+
+
+
+/etc/skel
+The /etc/skel directory is the skeleton structure of new useraccountsThis folder is copied when a user account is created
+It's a good place to store default configuration files for users
+Default required directories
+
+Only root or sudo users can edit this directory 
+
+
+
+Adding Users
+The command to add users is useraddOn debian based systems there is also a wizard style commandcalled adduser
+
+Only root or sudo users can add users
+By default when a user is created a group is also created for thatuser with the same name
+Once a user account is created you'll have to set a passwordIf a password is not set the user cannot login, however the usercan be used for servicesHow could that work? Let's think about it 
+
+
+
+
+
+useradd
+useradd [options] loginCommand	Description
+useradd -m franco	Create the user account franco
+useradd -m -b /home2franco	Create the user account franco with thehome directory in /home2/franco
+useradd -m -c "FrancoIacobacci" franco	Create the user account franco and addthe comment Franco Iacobacci
+
+
+
+
+passwd
+passwd [options] [login]Command	Description
+passwd	Prompt to change the password for the currentuser
+passwd franco	Prompts the user to enter a new password forfranco (only works for root)
+passwd -e franco	Make the user account franco expireimmediately 
+
+
+
+
+chpasswd
+chpasswd [options]
+Used for scripting password updates. Ex:
+echo franco:"$tudent1!" | chpasswd
+This will update franco's password to $tudent1! 
+
+
+
+usermod
+usermod [options] userCommand	Description
+usermod -md/home3/francofranco	Change the users franco's home directory to/home3/franco and move the current contents tothe new directory
+usermod -lfranco	Lock the user account franco
+usermod -aGdev franco	Add the dev group to franco 
+
+
+
+
+chfn
+chfn [-f full-name] [-o office] [-p phone] [-h h-phone] [username]Command	Description
+chfn	Open an interactive prompt to enteruser information
+chfn -f "FrancoIacobacci" franco	Assign the full name of FrancoIacobacci to franco
+chfn -o 68A franco	Assign the office number 68A to franco 
+
+
+
+
+Groups
+In Linux, groups have a similar functions to groups in Windows
+Instead of assigning permissions to a directory or file based onusers only, you can assign an entire groupRemember all users of the wheel group are given sudo privileges
+Another example, if you a /accounting folder, you can assign anaccounting group to have read and write access to that folder
+
+Each user has 1 primary group usually the same name as the usernameUser bob would have a group also named bob
+
+Users can be assigned multiple secondary groups 
+
+
+
+GID: Group Identifier
+Configured in /etc/group file
+Users can belong to multiple groups
+GID of 0 is the root groupsNormally you'll want to keep only root in this group
+
+Just like in UIDs, GIDs typically start at 1000 and go upwards
+999 and undeer are reserved for system level groups 
+
+
+
+Group passwords
+Linux groups can have passwords
+Passwords can be assigned using the gpasswd
+If an account has a password a user can join the group without anadministrator using the newgrp command
+This procedure is inherently insecure due to the group passwordbeing shared with multiple users. Therefore this is not arecommended procedure 
+
+
+
+/etc/group
+/etc/group stores group information including:group name
+password indicator
+GID
+usernames of all the group members 
+
+
+
+
+/etc/gshadow
+/etc/gshadow stores the login and password information including:group name
+md5 hashed password
+the administor of the group
+usernames of the group members 
+
+
+
+
+groupadd
+groupadd [options] groupCommand	Description
+groupadd student	Create a group called student
+groupadd -r webserver	Create a system group webserver
+groupadd -g 1001instructor	Create the instructor group with thegroup id of 1001 
+
+
+
+
+gpasswd
+gpasswd [options] groupCommand	Description
+gpasswd printers	Prompt the user to create a password for theprinters group
+gpasswd -a francoprinters	Add the user franco to the printers group
+gpasswd -d bobprinters	Remove the user bob from the printersgroup 
+
+
+
+
+newgrp
+newgrp [-] group
+root will not be prompted for a password, all other users will be
+Command	Description
+newgrp developers	Prompt the user for a password to join thedevelopers group
+newgrp - developers	Prompt the user for a password to join thedevelopers group and re-initialize the userenvironment 
+
+
+
+
+Why have file permissions?
+
+Just like on Windows a lot of times you'll want to restrict access tofiles, foldres and executables
+
+Would you want each user to modify each others home directory?
+
+Would you want everyone to be able to run the shutdowncommand? 
+
+
+
+What permissions look like
+Recall running the ls -l command you see something like:
+
+drwxr-x--- 2 fiacobacci fiacobacci 4096 Feb 18 03:27 logsdrwx--S--- 21 fiacobacci apache 4096 Feb 15 15:30 public_html-rw-r--r-- 1 fiacobacci fiacobacci 4578 Oct 30 11:37 tmux-client-3456.log
+
+The first column decribes all permissions, its always 10 characters
+
+Next the number of links to the file
+
+Then the username of the user owner
+
+Then the group name of the group owner 
+
+
+
+Permission break down
+First of the 10 characters is the file type- means a regular file
+b block special
+d directory
+l symbolic link
+s socket
+p named pipe
+c character device filea device that appears as a regular file 
+
+
+
+
+
+Permission breakdown (continued)
+The next 9 character are broken into 3 groups of 3User permissions - based user owner
+Group permissions - based on group owner
+Other permissions - all other users
+
+Each 3 is broken into:r which is read
+w which is write
+x which is execute 
+
+
+
+
+Directory permission breakdown
+Directory permissions are different from file permissions,obviously a directory can't be executedr - Permits the listing of files within the directory
+w - Permits creation, renaming, deleting files within thedirectory, and modifying the directory's attributes
+x - Permits directory entry, and access to the files and sub-directories insideDirectories need the x permission to be usable 
+
+
+
+
+
+Permissions Numeric
+The user, group and other permissions can also be representednumerically, through 3 sets of 3 bits which are added togetherr = 4
+w = 2
+x = 1
+
+For example:rw-r--r-- = 644
+rwx------ = 700
+rwxrw-r-- = 764
+rwxrwxrwx = 777 
+
+
+
+
+Permission Examples
+-rw-r--r-- = A file in which the user owner can read or write butnot execute, the group can read and everyone else can also readthe file
+drwx------ = A directory in which the user owner can list the files,create and modify files, and change into the directory, no one elsecan use the directory
+-rwxr----- = A file the user can read, write and execute the file,the group can read the file and other users can't view the file 
+
+
+
+
+Special Permissions SUID,GUID
+There are also special permissions for filesOn a file this means execute the file as the user owner or thegroup owner depending on which sticky bit is setNote: Scripts cannot have a sticky bit this has to be a programcreated and compiled
+Example: passwd, runs as root even when a regular user callsit
+When assigning permissions with chmod it would be u+s org+s (more on this shortly) 
+
+
+
+
+
+Sticky Bit
+The special permissions for a directory are differentThe user bit has no effect
+The group bit will have the group owner of files and folders inthe directory created with the same group owner as thedirectory
+The other bit will only allow deletion of a file from the originalowner (or of course root) 
+
+
+
+
+Commands
+File and folder permissions can be changed with chmodStands for change mode
+Used in conjunction with numeric or character permissions
+
+The user and group owners can be changed with chownStands for change owner 
+
+
+
+
+chmod
+chmod [options]... mode[,mode]... file...chmod [options]... numeric_mode file...Command	Description
+chmod 777 file	Set read, write and execute to everyone onfile
+chmod ugo+rwx folder	Add read, write an execute to user, groupand other
+chmod +r,u+wx file	Add read to everyone, and write andexecute to user 
+
+
+
+
+chown
+chown [options] [owner][:[group]] fileCommand	Description
+chown franco file	Change the user to franco on file
+chown franco:www folder	Change the user to franco and the groupto www
+chown :www folder	Change the group of the folder to www
+chown franco: file	Change the user to franco and the groupto the primary group of franco 
+
+
+
+
+
+Installing Software
+Historically in order to install software:We would download the source code
+Then depending on the type of code we would either:C Code - Use a compiler like GCC (GNU C Compiler) tocompile the software into a usable application
+BASH Script - store the file as an executable script
+
+
+Now we usually use some kind of package manager or packagemanagement system 
+
+
+
+Compiling
+Source code has a manifest definition in the compilinginstructions which lists all dependencies and versions
+If the compiler cannot find these dependencies then it cannotcontinue to compile the softwareIn this case the operation will be aborted and stderr displays anerror message with what dependencies haven't been met 
+
+
+
+
+Dependencies
+A dependency is a software library used by the program
+Why should we use dependencies?Instead of everyone creating the same software over and over,on developer creates a library and everyone can rely on it
+This allows for software to be developed quicker and moremodularly so pieces and be replaced as needed
+
+Example: MD5 hashing function can be quickly implemented usingan MD5 hashing library 
+
+
+
+Dependencies - Scenario - Multiple Versions
+App1 needs libfoo v1.2
+App2 needs libfoo v1.3
+When you have 2 different applications requiring the same librarybut different versions there is an issueYou can either store 2 libraries, which can get messy
+Upgrade the older application to the new library if you are thedeveloper 
+
+
+
+
+Dependencies - Scenario - Nested Dependencies
+Libfoo1.3 requires libgc1.33 and libC++1.67libgc1.33 requires libBar1.99 and libLubar2.37libLubar2.37 requires libnet1.2
+
+
+Just imagine this could be nested hundreds of times withthousands of dependencies especially when dealing with complexapplicationsImagine doing that manually? 
+
+
+
+
+Dependencies - Scenario - Circular Dependencies
+AppX v1 depends on app2which depends on app3
+which depends on app4
+which depends on AppX v0
+
+This is called circular dependencies
+In order to solve this problem all versions have to be installedsimultaneously 
+
+
+
+So how do we fix this?
+We could keep track of version numbers and install versions sideby side as required
+
+OR
+We could use a package management system! 
+
+
+
+What is a Package?
+Software Package is a collection of:Scripts
+Programs
+Files
+Directories
+List of Dependencies
+
+Programs are:Executable files
+Source code to be compiled 
+
+
+
+
+Package Management Systems
+A Package Management System is a set of utilities that allow forpackageInstallation
+Upgrading
+Removal
+Searching
+
+All these procedures are done based on a local database
+The local database is synced with remote repositories 
+
+
+
+Repositories
+A repository is a server that holds packages and packageinformationThey can be located on the internet
+Hosted internally
+Stored on the installation DVD
+
+Each distribution has at least one centralized repository, withpackages tested and compiled for that specific distribution
+Each distribution has different package delivery standards 
+
+
+
+Repository Configuration FIles
+A Repository configuration file will contain information about therepository including:Name
+Location (URL)
+Alternate locations (Mirror)
+
+In debian the repository configuration files are in /etc/apt/sources.list
+Example:deb.debian.org/debian/ bullseye-updates main 
+
+
+
+
+Distribution Package Formats
+*.deb for Debian Based DistrosEx. Debian, Ubuntu, MX Linux
+Also may contain Source or Pre-Compiled Binaries
+
+*.rpm for Redhat Based DistrosIncluding CentOS
+May Contain Source or Pre-Compiled Binaries
+
+*.tgz/.tar.gz for Source Code compilationContains compressed version of the source code to be installed 
+
+
+
+
+Debian Package Manager (dpkg)
+dpkg canInstall
+Uninstall
+Upgrade
+Query and Verify deb packages
+Maintain a record of installed packages
+Cannot automatically install dependencies
+Does not communicate with the repository 
+
+
+
+
+Command: dpkg/dpkg-query
+dpkg [options] actiondpkg-query [options] actionCommand	Description
+dpkg-query --list tmux	Query for the tmux package
+dpkg-query --list	Query every package
+dpkg -i tmux-2.4.2.e17_x86_64.deb	Install tmux from file
+dpkg -r tmux	Removes the package tmux 
+
+
+
+
+apt
+apt (advanced package tool)The front end manager for dpkg packages
+Installs package and dependencies when required
+Manages software upgrades from a repository
+Deals with managing all potential software from repositories 
+
+
+
+
+Command: aptCommand	Description
+apt list --installed	List installed packages
+apt list --upgradeable	List upgradeable packages
+apt list --all-version	List all versions of installedpaackages
+apt list --installed tmux	List installed version of tmux
+apt list --upgradeabletmux	List upgradeable versions of tmux
+apt list --all-versiontmux	List all versions of tmux 
+
+
+
+
+Command: aptCommand	Description
+apt install tmux	Install tmux package
+apt search tmux	Search for tmux package
+apt-file searchbin/tmux	Find packages that provide the tmux file
+apt info tmux	Provide info on the tmux package
+apt update	Update the package listing
+apt upgrade	This command will upgrade your installedpackages 
+
+
+
+
+Why ever use dpkg?
+Software packages maintained in server repositories are generallyold and thoroughly tested, therefore considered stable
+Sometimes you'll want a newer version of software for the latestfeatures
+In that case you'll have to download the latest version manuallyand install it using dpkgKeep in mind this means you are dealing with dependencies 
+
+
+
+
+dpkg Package Information
+nano-2.2.6-1.i386.debThis states that the package name is nano
+It is version 2.2.6
+-1 is the releaseA release is backports of security fixes
+
+It has been compiled for the i386 platform
+
+What is i386?i386,i486,i586,i686 are the codenames for 32 Bit processors
+amd64 is the codename for 64 Bit processors 
+
+
+
+
+Additional Repos
+It is possible to add additional repositoriesHowever keep in mind you have to make sure you trust therepository as they are sending you softwareImagine your repositories could have data miners or othermalicious software in them
+
+
+One of the common extra repos to install is epelhttps://fedoraproject.org/wiki/EPEL 
+
+
+
+
+Other Package Types
+FlatPak - Developed by Redhathttps://flatpak.org/
+
+Snap Packages - Developed by Canonical (Ubuntu)https://snapcraft.io/
+
+AppImage - Community Createdhttps://appimage.org/ 
+
+
+
+
+
+Secure Shell (SSH)
+What is SSH?SSH is a protocol that allows you to remotely connect to asystem and run command line and potentially GUI protocols
+It also allows for SFTP transfers
+And SSH tunnels, allowing you to tunnel your connectionthrough a server located elsewhere
+Most Linux Server distributions come with an SSH serverpreinstalled because it is considered secure
+
+Default port is 22 
+
+
+
+Background Info - Symmetric Encryption
+
+Symmetric Encryption - is encryption in which one key is used toboth encrypt and decrypt the information
+
+The key is generally called a shared secret
+
+In SSH the shared secret is session specific and a new one isgenerated for each client that connects
+
+There are a variety of connection algorithms like:AES
+Blowfish 
+
+
+
+
+Background Info - Asymmetric Encryption
+Asymmetric Encryption - is encryption in which a public key isshared to encrypt the data and a private key is used to decrypt thedata on the server end
+The Asymmetric encryption is only used in establishing the session
+Example protocols:Diffie Hellman
+Elliptic Curve Diffie Hellman 
+
+
+
+
+How does SSH work?
+	First a TCP session must be established through a TCP handshake
+	Then the server presents accepted encryption protocols andversions. As well as the authentication key for the client to verifythe server. If there is a matching pair, then the connection willproceed.
+	The client will also receive the public key for the server. The clientwill then verify the public key with historical records (if available),then connect.
+	First Asymmetric encryption is used to establish a secure session.
+	Then Symmetric encryption is used to share session data securely. 
+
+
+
+OpenSSH Server
+Most common SSH server
+Comes preinstalled on Debian
+Configuration is in /etc/ssh/sshd_config
+Service name sshd 
+
+
+
+/etc/ssh/sshd_config
+It's a good idea to disable remote login for root
+You can disable ciphers and algorithms that are consideredinsecure
+You can give specific permissions to specific groups, for exampleyou can force the shell to be sftp 
+
+
+
+~/.ssh/known_hosts
+The known_hosts contains all stored authenticated serversThe public key's are stored when a user accepts a new key andstores it permanently for future reference
+
+
+php.scweb.ca,204.225.7.45 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTY...
+If the key is changed, most SSH clients will not allow you toconnect, until you remove the line from known_hostsFor security reasons you should verify the key through anothermeans, like a phone call 
+
+
+
+
+Opening a remote shell
+One of the most common uses of an SSH server is remoteadministration
+SSH allows you to open a remote terminal and run any commandsas if you were connected directly
+Make sure you don't run the shutdown command remote ...
+You can also connect to run a single command 
+
+
+
+Command: ssh
+ssh [options] [user@]hostname [command]Command	Description
+ssh php.scweb.ca	Connect to php.scweb.ca and login asthe current user on the client system
+ssh root@php.scweb.ca	Connect to php.scweb.ca login as userroot
+ssh -C root@php.scweb.ca	Connect with compression enabled
+ssh -p 50022 server.com	Connect to port 50022 
+
+
+
+
+File Transfers
+SSH servers also support file transfer
+There are 2 common methodsSFTP - Secure File Transfer ProtocolWhich from a user perspective operates similar to FTP basedon commands
+From a system perspective has a much cleanerimplementation
+
+SCP - Secure CopyWorks similar to the cp command 
+
+
+
+
+
+Command: scp
+scp [options] [[user@host1:]]file1 [[user@host2:]]file2Command	Description
+scproot@php.scweb.ca:~/hello.txt/tmp/	Copy hello.txt from the homedirectory of root on php.scweb.cato /tmp on the current host
+scp /etc/hostsroot@php.scweb.ca:/etc/hosts	Copy your local copy of /etc/hoststo php.scweb.ca /etc/hosts 
+
+
+
+Command: sftp
+sftp [user@]host
+Example: sftp root@php.scweb.caCommand	Description
+put	Upload a file to the server
+get	Download a file from the server
+lls	List local files
+ls	List remote files 
+
+
+
+Command: sftp (continued)Command	Description
+lcd	Change local directory
+cd	Change remote directory
+lmkdir	Make a directory locally
+mkdir	Make a directory remotely
+exit	Exit SFTP 
+
+
+
+Scripting SSH/SFTP
+Notice with all the above commands there is no password optionThe password must be entered manually by the user
+Which means we can't easily script any of the commands above
+
+There are 2 solutions to scripting SSHsshpass - a command that wraps around ssh commands andprovides a password, however the password would be in plaintext in the scripts (considered bad practise)
+SSH Key Authentication - using keys to authenticate the usersimilar to how the user authenticates the server 
+
+
+
+
+Command: sshpass
+sshpass works by expecting the prompt assword: (to matchPassword: or password:)
+
+sshpass [-ffilename|-dnum|-ppassword|-e] [options] command argumentsCommand	Description
+sshpass -p"password"ssh root@php.scweb.ca	Connect using ssh to php.scweb.ca withthe password password
+sshpass -f"pass.txt"sftproot@php.scweb.ca	Connect using sftp to php.scweb.ca withthe password being the first line of pass.txt 
+
+
+
+Where and Why to use sshpass
+
+Never! ...
+Unless of course there is no possible way to use an authorized keySome companies will refuse to use authorized keys
+Some times the server implementation doesn't supportauthorized keys 
+
+
+
+
+~/.ssh/authorized_keys
+This is the file in each home directory on a server where keys thatare accepted as authentication are stored
+You can manually put public keys of authenticated users in this file
+
+Example:
+ssh-rsa asioudvvabwasduibanUInasOSDUIFnSKLDIo8809sdyfBKJSDFyIBfdkJSD ...
+Alternatively you can have ssh-copy-id to add the key for you 
+
+
+
+Command: ssh-keygen
+ssh-keygen is used to generate authentication keys to be stored inauthorized_keys
+
+ssh-keygen [-b bits] [-t dsa | ecdsa | ed25519 | rsa] [-N new_passphrase]Command	Description
+ssh-keygen	Will prompt the user for inputto create SSH keys
+ssh-keygen -t rsa -b 4096 -C"fiacobacci@stclaircollege.ca"	Will create a 4096 bit RSA key,with the email specified 
+
+
+
+Command: ssh-copy-id
+The command ssh-copy-id uses ssh to copy the generated key overto the server, it will prompt you for the users password
+
+ssh-copy-id [-i identity_file] [-p port] [user@]hostname
+
+The identity file by default is the newest file that matches ~/.ssh/id*.pub
+
+Example ssh-copy-id fiacobacci@php.scweb.ca 
+
+
+
+
+Scripting with SSH keys
+If you have configured SSH keys then scripting an SSH connectionor transfer is easy because you simple call the SSH commandUnless you added a passphrase to your key, so for scriptingpurposes do not add a passphrase to your key
+If you are not scripting any commands then for security reasons,you should have a passphrase on your key 
+
+
+
+
+Using multiple keys on a System
+If you have multiple SSH keys for your SSH client you can use ~/.ssh/config to configure which key is used whenThis can be different based on a username and host combination
+
+
+Host php.scweb.caHostname php.scweb.caIdentityFile ~/.ssh/id_rsaUser rootHost php.scweb.caHostname php.scweb.caIdentityFile ~/.ssh/fiacobacciUser fiacobacci 
+
+
+
+SSH Tunnels
+SSH tunnels can be used to connect to other hosts on a remotenetworkFor example you could connect to an RDP server that's onlyaccessible internally through an externally available SSH server
+
+They can also be used to create a SOCKS proxy where you canroute all traffic through an SSH serverFor example you can route all you web traffic through your SSHserver 
+
+
+
+
+SSH TunnelsCommand	Description
+ssh -D 2001root@server.com	Host a socks proxy on your local machineon port 2001 and route traffic throughyour SSH server
+ssh -L54000:10.13.37.2:3389root@server.com	Host an SSH tunnel on port 54000 locallythat routes to the RDP server at theremote network at 10.13.37.2
+ssh -R54000:172.16.2.4:3389root@server.com	Host an SSH tunnel on port 54000 on theremote server that routes to 172.16.2.4locally 
+
+
+

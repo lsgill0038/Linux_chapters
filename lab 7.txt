@@ -1,0 +1,78 @@
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+  
+	Student Name: 	 	Student Number: 	 
+ 
+ 
+  	 	 
+10 
+Package Management  	 	 	 	 	 	 
+ 
+Part 1: Looking up information on a package  	 	 	 	 	 	[1 Marks] 
+1.	Save all the answers of this documents in ~/lab6.txt 
+2.	Run the command apt info tmux 
+3.	What is the version number of tmux? __________ 
+4.	Now look up tmux online, what is the latest version? _________ 
+5.	Lookup the info on the php package.  What is the version available? ________ 
+6.	What is the latest version of php available? _________ 
+7.	Lookup the info on apache web server (the apache2 package)? _________ 
+8.	What is the latest version of the apache web server? _________ 
+ 
+Part 2: Install packages with apt 	 	 	 	 	 	 	 	[2 Marks] 
+1.	Install apt-file using the command apt install apt-file 
+2.	Accept installing the extra packages by typing y followed by Enter 
+3.	Install htop using apt 
+4.	Verify htop is working by running the htop command (Press F10 to quit or play around to learn a bit about htop). 
+5.	Verify the installation by running the command apt-file update 
+6.	Install mlocate using apt 
+7.	Update the locate database by using updatedb 
+8.	Install the wget package using apt 
+ 
+Part 3: Listing packages using apt 	 	 	 	 	 	 	 	[1 Marks] 
+1.	Run the command apt list --installed 
+2.	Noitce how there are more packages then available screen space?  Pipe the output of the command to less like: apt list --installed | less 
+3.	What if we want to know how many packages there are? Well notice the first line just says “Listing” so we want to skip that, so instead of piping to less, pipe to tail -n+2 this will show all lines starting from the 2nd line. Next pipe the output of that command to wc -l 
+ANS.  apt list --installed | tail -n+2   | wc -1
+How many packages are installed? _________ 
+4.	List all available packages with apt list.  How many are there? ________ 
+ANS.  apt list.  
+
+5.	Find the apache2-bin package, what version is it?  _______________________   
+ANS. Apt list apache2-bin
+What is the architecture that is supported? _________________________ 
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci F2021 	 	 	Page 1 
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+Part 4: Searching for packages in apt  	 	 	 	 	 	[2 marks] 
+1.	Using apt search with or without the --names-only argument to search for a package that provides SSL.  If the results are too long don’t forget to use less. 
+
+2.	Which package provides “Secure Sockets Layer toolkit – cryptographic utility”? ________ 
+3.	Is that package installed (Use apt info to find out, look for the fields APT-Manual-Installed.  Remember if it is yes you manually installed the package, if it is no it has been installed as a dependency)?  ___________ 
+4.	Now find a package that has the file bin/ifconfig command using the apt-file search bin/ifconfig 
+5.	What package provides ifconfig? ___________ 
+6.	Is the package installed? ______________ 
+ 
+Part 5: Removing a package with apt and install a package using dpkg 	 	[1 Marks] 
+1.	Remove htop using apt remove htop 
+2.	Now download Rclone wget https://downloads.rclone.org/v1.56.1/rclone-v1.56.1-linux-amd64.deb  
+3.	Next we want to install the latest version of rclone using dpkg dpkg -i {file you just downloaded … USE TAB TO AUTOCOMPLETE} 
+ 
+Part 6: More Practice! 	 	 	 	 	 	 	 	 	 	[3 Marks] 
+1.	Find a text based browser using apt search and install it.   Which one did you install? ____________________ 
+ANS. Apt install lynx
+2.	Search for a package that provides the chkconfig command do not install it! What is the package name? 
+ANS.   Apt search chkconfig ________________ 
+3.	What packages provide the java command? _____________________________________ 
+4.	What packages provide the clang command? _____________________________________ 
+5.	Find a another CLI Text Editor using apt search.  Which one did you find? _______________________ 6. What does the davfs2 package give you?  Please summarize the description. 
+___________________________________________________________________________________ 
+7.	Install python3 
+8.	Install the googler package using dpkg from: 
+https://github.com/jarun/googler/releases/download/v4.3.2/googler_4.3.2-1_debian10.amd64.deb 
+ 
+HAVE YOU INSTRUCTOR MARK YOU LAB, THEN SHUTDOWN YOUR VIRTUAL MACHINE 
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci F2021 	 	 	Page 2 

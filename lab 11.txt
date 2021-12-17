@@ -1,0 +1,75 @@
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+  
+	Student Name: 	 	Student Number: 	 
+ 
+ 
+Wordpress 	 	 	 	 	 	 	 	 	 	  	 	 
+	 	10 
+Part 1: Installing httpd, and mariadb  	 	 	 	 	 	 	[1 Marks] 
+1.	Install apache2, mariadb-client,  mariadb-server, wget, lynx, php-json 
+ANS: apt install apache2
+        Apt install mariadb-client
+2.	Next we want to make sure the mariadb service start at system start, use systemctl 
+ANS: systemctl start mariadb 
+	
+Part 2: Setting up WordPress 	 	 	 	 	 	 	 	 	[7 Marks] 
+1.	Use wget to download the latest version of WordPress from https://wordpress.org/latest.tar.gz 
+ANS: wget  https://wordpress.org/latest.tar.gz
+2.	Use the command tar xvzf latest.tar.gz to decompress and extract the files from the tar archive
+ANS:  tar xvzf latest.tar.gz
+3.	Move the wordpress folder to /var 
+ANS: mv ~ /wordpress /var 
+4.	Setup a new virtual host on your apache server to point to wordpress.{yourlastname}.com put the document root in /var/wordpress(Refer to apache last lab for help) 
+ANS: mkdir /var/wordpress/wordpress.lastname.com
+Vim /etc/apache/sites-available/wordpress.lastname.com.conf
+<VirtualHost *:80>
+     ServerName wordpress.lastname.com
+    DocumentRoot   /var/wordpress/wordpress.lastname.com
+</VirtualHost>
+<Directory /var/wordpress/wordpress.lastname.com>
+      Require all granted 
+</Directory>
+a2ensite wordpress.lastname.com.conf
+systemctl reload apache2
+5.	Create a database called wordpress in your mariadb 
+ANS:mysql -u root -p
+CREATE DATABASE wordpress;
+6.	Create a user called wordpress with the password sserpdrow in mariadb 
+ANS: CREATE USER ‘wordpress’@localhost IDENTIFIED BY ‘sserpdrow’;
+7.	Grant all privileges for the wordpress database to the wordpress user 
+ANS: GRANT ALL PRIVILEGES ON wordpress*. to wordpress@localhost;
+8.	Move the wp-config-sample.php to wp-config.php 
+ANS: ls / var/wordpress 
+Mv /var/wordpress/wp-config-sample.php /var/wordpress/wp-config.php
+9.	Update the database information in the configuration file.
+ANS: vim /var/wordpress/wp-config.php 
+10.	Create the the following folders and make sure they are owned by the user used by the apache service. a. /var/wordpress/wp-content/uploads 
+b. /var/wordpress/wp-content/cache 
+ANS:  mkdir /var/wordpress/wp-content/uploads
+        Mkdir /var/wordpress/wp-content/cache
+11.	Create an entry in /etc/hosts for wordpress.{yourlastname}.com to point to 127.0.0.1 
+ANS: vim /etc/hosts
+127.0.0.1  wordpress.yourname.com
+12.	Test your wordpress site using the lynx browser by typing lynx wordpress.{yourlastname}.com 
+Ans: lynx wordpress.yourname.com
+ 
+Part 3: Reverse Proxy 	 	 	 	 	 	 	 	 	 	[2 Marks] 
+1.	Enable apache proxies by running a2enmod proxy and a2enmod proxy_http
+ANS: a2enmood proxy 
+        A2enmod proxy http 
+2.	Create a new virtual host for search.{yourlastname}.com 3. Setup a reverse proxy to http://www.google.com from  
+ANS: mkdir /var/search.lastname.com
+Vim /etc/apache2/sites-available/search.lastname.com.conf
+<VirtualHost *:80> 
+ServerName search.lastname.com
+ProxyPreserveHost On
+ProxyPass / http://www.google.com
+ProxyPassReverse / https://www.google.com
+</VirtualHost>
+
+ 
+HAVE YOU INSTRUCTOR MARK YOU LAB, THEN SHUTDOWN YOUR VIRTUAL MACHINE 
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci F2021 	 	 	Page 1 

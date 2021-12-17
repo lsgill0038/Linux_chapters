@@ -1,0 +1,106 @@
+Which of the following is not a PHP based CMS
+
+Wix
+CMSS are designed to be used by developers only.
+
+False
+Generally CMS's aren't customizable or extendable.
+
+ False
+Which command will allow you to quickly download a file from the internet through http?
+
+Wget
+Running Java or node.js servers to be directly externally available is considered good practise
+
+
+False
+CMS are used infrequently on the internet.
+
+False
+In order to setup wordpress you need to setup a configuration file with database information.
+
+True
+Which of the following is database management software for MySQL or MariaDB?
+
+PHPMyAdmin
+You can run BASH commands in the mysql shell.
+
+False
+MariaDB is a fork of MySQL
+
+True
+The MariaDB root password is the same as the system root password.
+
+False
+It is impossible to reset the MySQL root password.
+
+False
+What does SQL stand for?
+
+Structured Query Language
+Which SQL keyword starts the statement to add data to a table?
+
+INSERT
+The mysql user table contains information about the user accounts for MariaDB
+
+True
+To view a users permissions you would use which command?
+
+SHOW GRANTS FOR user,
+What command do you use to export a MySQL/MariaDB database?
+
+Mysqldump
+Which of the following will create a user named bob in MariaDB that can be accessed from any 10.0.0.0/8 address?
+
+CREATE USER 'bob'@'10 % % % IDENTIFIED BY 'password,
+What are MPM's not responible for?
+
+Verifying configuration
+The php configuration file is located in /etc and is /etc/php.ini
+
+True
+In the directive <VirtualHost *:80>, what does the represent?
+
+The server IP address to bind to
+If you run apachectl configtest it will find both logical and syntactical errors.
+
+False
+In order to open up TCP port 8080 on Linux what command can you run?
+
+firewall-cmd --permanent --add-port=tcp/8080
+You can only host multiple sub domains using vhosts not domains.
+
+False
+The access_log log files will show you who accessed your server.
+
+True
+What is the default port for HTTPS?
+
+443
+What directive in the httpd.conf tells the server where the files are found to host as web pages?
+
+DocumentRoot
+Which of the following is not true regarding PHP?
+
+PHP files must be compiled
+What command do you run to change the password of franco while logged into franco?
+
+Passwd
+What is the equivalent to chmod 777?
+
+chmod =rwx
+What is roof's UID?
+
+0
+Who can execute a script if it has the permissions -rwxr-xr--?
+
+User and Group members.
+What command do you use to change owner of a file or directory?
+
+Chown
+What command would you use to create a group?
+
+Groupadd
+How do I create the user franco?
+
+useradd franco

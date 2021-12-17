@@ -1,0 +1,116 @@
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+  
+Student Name: 	 	Student Number: 	 
+ 
+ 
+  	 	 
+10 
+Users & Permissions 	 	 	 	 	 	 	 
+ 
+Part 1: Creating Users 	 	 	 	 	 	 	 	 	 	[2 marks] 
+1.	Login as root  
+2.	Create a user account using your first name useradd -m -s /bin/bash {yourFirstName} 
+3.	Now try running the command cd ~{yourFirstName}.  Where are you in the file system? _______________ 
+4.	Now type groups {yourFirstName}  What groups are you in? ___________________________ 
+5.	Make the directory /home2 
+ANS.   Mkdir /home2
+
+6.	Now create another user called studentx with a home directory located in /home2.  (Hint: lookup -b) 
+ANS.  Useradd -m -b /home2  studentx
+
+7.	Now try cd ~studentx Where are you? _________________ 
+8.	Run chfn {yourFirstName} and follow the prompts 
+9.	Take a look at /etc/passwd what does your user account line look like? ___________________________ 
+10. Run passwd {yourFirstName} and add a password to your account 
+11. Add a password to the studentx account as well. 
+ANS.  passwd studentx
+ 
+ 
+Part 2: Creating Groups  	 	 	 	 	 	 	 	 	[1 Marks] 
+1.	Using the groupadd command create the following groups: tux, students, teachers 
+2.	What is the group ID of tux? ___ groupadd tux____ 
+3.	What is the group ID of students? __ groupadd  students______ 
+4.	What is the group ID of teachers? __ groupadd  teachers
+ 
+ 
+Part 3: Adding users to groups  	 	 	 	 	 	 	 	[2 Marks] 
+1.	Run usermod -G sudo {yourFirstName} 
+2.	What groups is you user account in now? ____cat /etc/group_________________ 
+3.	Now run usermod -G tux {yourFirstName} 
+4.	Are you still in the group sudo? _____no its tux now___________ 
+5.	Try running the same command from step 1 except include the -a flag for append. 
+ANS.  usermod -aG sudo {yourFirstName}
+6.	Are you still in the group tux? _________________ 
+7.	Run gpasswd -a studentx students this will add the user studentx to the students group. 
+8.	Now add studentx to the tux group using gpasswd 
+ANS.  gpasswd -a studentx tux
+To check use  this command    cat /etc/group
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci W2020 	 	 	Page 1 
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+Part 4: Directory Permissions  	 	 	 	 	 	 	 	[3 Marks] 
+1.	Create a folder called /lab6.4 
+ANS.  mkdir /lab6.4
+
+2.	Now do an ls -l / Who are the user and group owners of /lab6.4? ___________   ______________ 
+ANS.  cd /
+          Ls -l /
+
+3. What are the directory permissions on /lab6.4? ______r-x r-x_________________ 
+4.	Now switch user to the user account created in part 1.2. 
+ANS. su yourfirstname
+
+5.	Then change directory to /lab6.4  Was that successful? ____cd /lab6.4    = yes__ 
+6.	Now press Ctrl + D to logout of the user. 
+
+7.	Now while logged in as root change the directory permissions to 750 using the chmod command. 
+       ANS.  chmod 750  (directory name)
+
+8.	What are the permissions on /lab6.4 now? __to check permissions (ls -l)  answer= drwxr-x-- _________ 
+9.	Switch back to your user made in part 1.2.  Can you change directory to /lab6.4 now? ___
+ANS.  su  yourfirstName__
+    cd /lab6.4_______ 
+10.	Logout of your user again.    =  ctrl D
+11.	Now change the group owner of /lab6.4 to tux using chown :tux /lab6.4 
+12.	Now change user back to the one created in part 1.2, can you change directory to /lab6.4? ____
+ANS. su yourfirstname
+         Cd /lab6.4
+13.	Why? __________because now it’s a part of tux_________________________________ 
+14.	Now try to create a file by running echo “hello” >> /lab6.4/hello.txt from your user account 
+15.	Was it successful? ____permission denied______________ 
+16.	Now log out of your account and change the permissions to 770 on /lab6.4 
+ANS. chmod 770 /lab6.4
+17.	Now try to create a file again from your user account and it should be successful.  Why? ____________ 
+ANS. su yourfirstname
+          echo “hello” >> /lab6.4/hello.txt
+because now we give full permission to group as lab6.4 is part of tux.
+ 
+ 
+Part 5: File Permissions  	 	 	 	 	 	 	 	 	[2 Marks] 
+1.	While logged in as your user account open /lab6.4/hello.txt in vim 
+ANS. vim /lab6.4/hello.txt
+
+2.	Now edit and save the file.   i , :wq
+3.	Now log out of your user account and switch user to studentx  =  ctrl D  , su studentx
+4.	Are you able to edit the file hello.txt in vim?  Or is it read only?  It is read only
+5.	Run su {yourFirstName} notice how since you are not root you are prompted for a password. 
+6.	Now using chmod add write privileges to other users so o+w to hello.txt 
+ANS. chmod o+w /lab6.4 /hello.txt
+7.	Now log out of your user account and you should be back to studentx.  Open the file hello.txt and add a line to it.  = ctrl D , vim /lab6.4 /hello.txt
+8.	Log back into your user account. = su studentx
+9.	Now change the group owner of file to tux and add the group write permission.  Then remove the other user write permission with o-w using chmod.  
+ANS.   gpasswd -a studentx tux
+10.	Log out of your account, can you still edit the file from the studentx account, explain why? 
+ANS. su yourfirstname 
+         gpasswd -a studentx tux
+        vim /lab6.4.txt/hello.txt
+_________________________________________________________________________________________ 
+ 
+ 
+HAVE YOU INSTRUCTOR MARK YOU LAB, THEN SHUTDOWN YOUR VIRTUAL MACHINE 
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci W2020 	 	 	Page 2 

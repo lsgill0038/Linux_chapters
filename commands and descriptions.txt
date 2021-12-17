@@ -1,0 +1,154 @@
+Command                              Description
+
+dpkg-query --list tmux               Query for the tmux package
+
+dpkg-query --list                    Query every package
+
+dpkg -i tmux-2.4.2.e17_x86_64.deb    Install tmux from file
+
+dpkg -r tmux                         Removes the package tmux
+
+apt list --installed                List installed packages
+
+apt list --upgradeable              List upgradeable packages
+
+apt list --all-version              List all versions of installed
+                                    paackages
+
+apt list --installed tmux           List installed version of tmux
+
+apt list --upgradeable              List upgradeable versions of tmux
+tmux
+                             
+apt list --all-version              List all versions of tmux
+tmux 
+
+apt install tmux                   Install tmux package
+
+apt search tmux                    Search for tmux package
+
+apt-file search
+bin/tmux                          Find packages that provide the tmux file
+
+apt info tmux                     Provide info on the tmux package
+
+apt update                        Update the package listing
+
+apt upgrade                       This command will upgrade your installed 
+                                  package        
+
+ssh php.scweb.ca                  Connect to php.scweb.ca and login as
+                                 the current user on the client system
+
+ssh root@php.scweb.ca             Connect to php.scweb.ca login as user
+                                 root
+
+ssh -C root@php.scweb.ca         Connect with compression enabled
+
+ssh -p 50022 server.com          Connect to port 50022   
+
+scp                               Copy hello.txt from the home
+root@php.scweb.ca:~/hello.txt      directory of root on php.scweb.ca
+/tmp/                              to /tmp on the current host
+
+                 
+scp /etc/hosts                   Copy your local copy of /etc/hosts
+root@php.scweb.ca:/etc/hosts       to php.scweb.ca /etc/hosts
+
+put                                 Upload a file to the server
+
+get                                 Download a file from the server
+
+lls                                 List local files
+
+ls                                   List remote files
+
+lcd                                   Change local directory
+
+cd                                    Change remote directory
+
+lmkdir                               Make a directory locally
+
+mkdir                                Make a directory remotely
+
+exit                                 Exit SFTP
+
+sshpass -p"password"                Connect using ssh to php.scweb.ca with
+ssh root@php.scweb.ca                the password password
+                                      
+
+sshpass -f"pass.txt"               Connect using sftp to php.scweb.ca with
+sftp                               the password being the first line of pass.txt
+root@php.scweb.ca                        
+
+ssh-keygen                          Will prompt the user for input
+                                     to create SSH keys
+
+ssh-keygen -t rsa -b 4096 -C           Will create a 4096 bit RSA key,
+"fiacobacci@stclaircollege.ca"              with the email specified
+
+ssh -D 2001                   Host a socks proxy on your local machine
+root@server.com               on port 2001 and route traffic through
+                              your SSH server
+
+
+ssh -L                          Host an SSH tunnel on port 54000 locally
+54000:10.13.37.2:3389           that routes to the RDP server at the
+root@server.com                 remote network at 10.13.37.2
+
+
+ssh -R                           Host an SSH tunnel on port 54000 on the
+54000:172.16.2.4:3389             remote server that routes to 172.16.2.4
+root@server.com                     locally
+
+firewall-cmd --permanent --addport=80/tcp   Open TCP port 80 permanently
+
+firewall-cmd --permanent --addservice=https    Open port(s) for https permanently
+
+firewall-cmd --permanent --removeport=443/tcp    Closes TCP port 443 permanently
+
+firewall-cmd --reload                            Reload the firewall configuration
+
+a2enconf security.conf                    Enable the security.conf site on apache2
+                                         by creating symlinks from confavailable in conf-enabled
+
+a2disconf security.conf                  Disable the security.conf module on
+                                         apache2 by removing symlinks from
+                                         conf-enabled 
+                                         
+a2ensite                               Enable the iacobacci.com.conf site on apache2
+iacobacci.com.conf                     by creating symlinks from sites-available in
+                                       sites-enabled
+
+a2dissite                               Disable the iacobacci.com.conf module on
+iacobacci.com.conf                     apache2 by removing symlinks from sitesenabled 
+
+a2enmod ssl                            Enable the ssl module on apache2 by creating
+                                       symlinks from mods-available in mods-enabled
+
+a2dismod ssl                           Disable the ssl module on apache2 by removing
+                                        symlinks from mods-enabled
+
+apachectl start                        Start the server
+
+apachectl stop                         Stop the server
+
+apachectl restart                      Restart the server
+
+apachectl configtest                   Test the syntax of the configuration
+
+apachectl status                       Display a brief status of the server
+
+apachectl fullstsatus                  Display full status report from mod_status
+
+mysql                                  Login to the database at localhost
+                                       on the default port as root with no
+                                       password
+
+mysql -u bob -p"drowssap"              Login to the local database as user
+                                        bob with the password drowssap
+
+mysql -u bob -p"drowssap"               Login to the MySQL server on
+--host=php.scweb.ca --                  php.scweb.ca on port 3306
+port=3306
+

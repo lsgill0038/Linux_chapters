@@ -1,0 +1,121 @@
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+  
+	Student Name: 	 	Student Number: 	 
+ 
+ 
+Apache Web Server 	 	 	 	 	 	 	 	  	 	 
+	 	10 
+Part 1: Installing httpd, and php 	 	 	 	 	 	 	 	[2 Marks] 
+1.	Install apache2, libapache2-mod-php, php, php-mysql, lynx, curl, firewalld 
+Ans: apt install apache2
+apt install mod_ssl
+apt install libapacd2-mode-php
+apt install pho
+apt install php-mysql
+apt install lynx
+apt install curl
+apt install firewalld
+2.	Start your firewalld service, and enable it to start at system startup. 
+Ans: systemctl enable firewalld
+3.	Next we want to allow incoming connections through the firewall: 
+Ans:
+a.	firewall-cmd --permanent --add-service=http 
+b.	firewall-cmd --permanent --add-service=https 
+c.	firewall-cmd --reload 
+4.	Next we want to make sure the apache2 service start at system start, use systemctl. (Hint: 2 systemctl commands are required) 
+Ans: systemctl stasrt apache2
+Systemctl enable apache2
+ 
+Part 2: Setup a Basic Web Server 	 	 	 	 	 	 	 	[2 Marks] 
+1.	Now that you’ve started the web server navigate to http://{VM IP} using lynx and you should get the apache test page.   Command: lynx http://{VM IP} 
+Ans; ip addr 
+Lynx http://127.0.0.1
+
+2.	Set the ServerAdmin to your email address in /etc/apache2/apache2.conf.  (Add the server value).
+Ans: vim /etc/apache2/apache2.conf 
+3.	Assuming you have the apache test page create a new index.php page in /var/www/html have it echo your name! 
+Ans: vim /var/www/html/index.php
+<?php 
+Echo “Hello your name”
+?>
+ 
+4.	Then create a page called ip.php with the code below.  Once created test with lynx http://{VM IP}/ip.php 
+a. <?php	echo	$_SERVER["REMOTE_ADDR"];	?> 
+Ans:  vim /var/www/html/ip.php
+<?php 
+echo $SERVER[“REMOTE_ADDR”];
+?>
+ 
+Part 3: Testing your HTTPS 	 	 	 	 	 	 	 	 	[2 Marks] 
+1.	Enable the ssl mod with a2enmod ssl then restart your apache service.
+Ans: a2enmod ssl 
+Systemctl restart apache2
+2.Enable your default ssl site using a2ensite default-ssl.conf 
+Ans: a2ensite default-ssl.conf
+Systemctl reload apache2
+3.	Now navigate to your IP page. 
+Ans: vim /var/www/html/ip.php
+Lynx http://127.0.0.1/ip.php
+4.	Now take a look at your certificate configuration /etc/apache2/sites-available/default-ssl.conf 
+a.	Where is the certificate file located? ___________________________
+ ANS: vim /etc/apache2/sites-available/default-ssl.conf 
+5.	Looking at /etc/apache2/mods-available/ssl.conf. Which SSL Protocols are disabled? _________________________________ 
+6.	Navigate to your page by using lynx https://127.0.0.1 
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci W2020 	 	 	Page 1 
+St. Clair College of Applied Arts and Technology 
+MIT416 – Linux I 
+ 
+ 
+Part 4: Setting up vhosts  	 	 	 	 	 	 	 	 	[4 Marks] 
+1.	First we need to take notes on a few values in /etc/apache2/apache2.conf  
+a.	Look for and make note of the following fields: 
+i.	ServerRoot ______________ 
+ii.	User _________________ 
+iii.	Group ____________________ 
+b.	Notice these look-like variable names?  Look at their values in /etc/apache2/envvars 
+2.	Next create a directory in /var/vhost 
+Ans: mkdir /var/vhost
+3.	Within the vhost directory above create a directory {lastname}.com (ex iacobacci.com), this will be our document root. Create a small index.html file containing your student number. 
+a.	Note: Ensure the user and group that are running apache have the ability to read this file
+ANS: mkdir /var/vhost/lastname.com
+Vim /var/vhost/lastname.com/index.html
+<html>
+<head>
+<title> student number </title>
+<body>
+Student number
+</body>
+</html>
+Chmod 664 /var/vhost/lastname.com/index.html  
+4.	Next create the vhost file in your /etc/apache2/sites-available remember the file needs to end in .conf use the domain above {lastname}.com.conf as the filename. 
+Ans: vim /etc/apache2/sites-vailable/lastname.com.conf
+Coding:
+<virtual Host :80>
+ServerName lastname.com
+DocumentRoot /var/vhost/lastname.com
+<VirtualHost>
+<Directory /var/vhost/lastname.com>
+ Require all granted
+</Directory>
+5.	Create the following file, notice we are covering both port 80  
+ 
+a.	DocumentRoot should be followed by the directory you created in step 3 
+b.	Server name should be followed by {lastname}.com 
+c.	Directory should be followed by the Document Root directory 
+6.	Enable your site using a2nensite {site conf file name}
+Ans: a2enesite lastname.com.conf 
+7.	Reload your apache configuration once complete
+Ans: systemctl reload apache2 
+8.	In you /etc/hosts file add your domain to 127.0.0.1 so it will resolve on your server
+Ans: vim /etc/hosts
+{add “127.0.0.01 lastname.com”} 
+9.	Now test http with lynx {lastname}.com 
+10.	Now test https with lynx https://{lastname}.com 
+ 
+ 
+HAVE YOUR INSTRUCTOR MARK YOUR LAB, THEN SHUTDOWN YOUR VIRTUAL MACHINE 
+ 	MIT416 – Linux I 	 	 
+Modified by:  Franco Iacobacci W2020 	 	 	Page 2 
