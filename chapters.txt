@@ -1,0 +1,1859 @@
+Chapter 11
+
+Content Management Systems
+Objectives
+Learn about PHPMyAdmin
+Learn about Content Management Systems
+Learn about Wordpress
+Learn how to setup Wordpress
+Learn about alternative CMSs
+2
+
+Content Management System
+What is a Content Management System (CMS)?
+An application:
+That supports creation and modification of digital content
+Often used to support multiple users working in a
+collaborative environment
+That supports the management of the content of Web Pages
+Web Content can include, text embedded graphics, photos,
+videos, audio, maps, program code
+3
+
+Why use a CMS?
+CMS's take the modification of a website content out of developers
+hands and puts it in the hands of users
+Imagine owning a store and having to hire a developer to update
+inventory every day, that would be expensive
+CMS's also allows users to follow templates
+Usually has built in analytics or an extension for analytics
+Usually is secure, or is more thoroughly tested due to the mass
+usage
+4
+
+What makes up a CMS?
+Typically CMS's have 2 major components
+A Content Management Application (CMA)
+The CMA is the front-end user interface that allows a user,
+even with limited expertise to add, modify and remove
+content from a website without intervention from a
+webmaster or developer
+A Content Delivery Application (CDA)
+The CDA is the back end which delivers the content to the
+content consumers (ex. customers)
+5
+
+WordPress
+WordPress is an open source CMS
+Coded with PHP and supports MySQL or MariaDB
+A good starting point to develop websites that need constant
+updating
+Can be extended with thousands of plugins
+WordPress was used by about 40% of the top 10 million
+websites as of 2021
+Up from 27.5% in 2017
+6
+
+WordPress (continued)
+Some downsides to WordPress:
+WordPress is a huge, complicated application
+There are constant security updates that must be applied
+WordPress is a large attack target due to its popularity
+Too many choices for plugins and themes. It can be difficult to
+choose the best quality plugins and themes.
+Plugins are not as reliable or secure as the base application
+7
+
+How to setup WordPress
+Since we already have Apache setup
+1. Download the latest version using
+wget http://wordpress.org/latest.tar.gz
+2. Extract the downloaded WordPress file to the hosted folder
+using tar xzvf latest.tar.gz
+3. Create a database in MariaDB for WordPress (ex. WordPress)
+4. Create an user account in MariaDB and give permission to your
+Database
+8
+
+How to setup WordPress continued
+5. ./wordpress/wp-config-sample.php to ./wordpress/wp-config.php
+6. Update the wp-config.php file with the correct values in Database
+Name, Database User, and Database Password:
+define('DB_NAME', "WordPress");
+define('DB_USER', "wpuser");
+define('DB_PASSWORD', "password");
+9
+
+How to setup WordPress continued
+7. Create 2 folders called uploads and cache
+./wordpress/wp-content/uploads
+./wordpress/wp-content/cache
+8. Change the owner of the 2 directories created to apache using
+chown apache:apache ./wordpress/wp-content/uploads
+chown apache:apache ./wordpress/wp-content/cache
+9. Restart Apache.
+10
+
+PHPMyAdmin
+PHPMyAdmin is an opensource software tool written in PHP
+It is intended to handle administration of a MySQL or MariaDB
+server through a web application
+It allows you to execute SQL statements as client to a MySQL or
+MariaDB server
+Frequently used operations (managing databases, tables, columns,
+relations, indexes, users, permissions, etc.)
+It can be significantly slower then command line to execute SQL
+statements, however has an efficient interface from a usage
+standpoint
+11
+
+Installing PHPMyAdmin
+1. Copy the latest link from https://www.phpmyadmin.net/
+2. Use wget to download the package
+3. Extract the zip file using unzip to the location where it will be
+hosted by apache (ex. the DocumentRoot of a vhost)
+When installing PHPMyAdmin to a server consider adding it to a
+server that is only internally accessible as it is database
+management software
+If there is a bug that causes unauthorized access, you'll want to
+minimize the risk
+12
+
+Alternative CMS: Joomla
+Can be found here: https://www.joomla.org/
+Joomla is also PHP based
+It's coded to work with MySQL, PostgreSQL, MSSQL, SQLite
+It has search engine optimization
+It supports extensions similar to WordPress
+Represents about 3% of the websites on the internet
+13
+
+Alternative CMS: concrete5
+Can be found at: https://www.concrete5.org/
+concrete5 is also coded in PHP
+Supports MySQL, and MariaDB
+It supports versioning for every page
+Meaning it's easy to rollback if needed
+Supports a drag and drop style of website creation
+14
+
+Alternative CMS: Drupal
+Can be found at: https://www.concrete5.org/
+Drupal is also coded in PHP
+Supports MySQL, MariaDB, PostgreSQL, MSSQL, SQLite, Oracle
+Drupal usually requires some developer intervention at first,
+however in the long term scales better then a WordPress web
+application
+Drupal generally provides a more robust but complex interface
+15
+
+Other languages
+So far we've talked about CMS's that are all coded in PHP
+However there are CMS's coded for other types of web servers like
+Java or node.js based servers
+There are even hosted only CMS's like Wix, which can only be used
+in the cloud
+16
+
+Alternative CMS: Wix
+Can be found: https://www.wix.com/
+Wix cannot be internally hosted, you must host it on Wix Servers
+Very user friendly interface to create website
+Has advanced feature set for those who require a more robust
+solution
+17
+
+Alternative CMS: ghost.js
+Can be found at: https://ghost.org/
+ghost.js is coded with node.js
+It has some integrations
+It is designed to be a blogging platform
+Search Engine Optimization and social features are built in
+18
+
+Other Language Servers
+Recall from our Apache Web Server lesson, Apache will bind to the
+port and listen for requests.
+Then using a PHP mod apache will be able to handle PHP pages by
+calling PHP as a child to apache
+Node.js on the other hand will bind to the port itself and node.js
+will handle the Web Requests
+Java operates similar to node.js in that it also binds to the port and
+handles the web requests
+Since both Java and node.js are less tested and robust they are
+more prone to bugs
+19
+
+Apache Reverse Proxies
+If you need to host a less secure server, but don't want it directly
+front facing, you can use Apache to host a reverse proxy
+OR if you need more then one type of server hosted on the same
+machine, for example both a Java and node.js server
+First you would setup your other server to run on a different port,
+usually above 1024 so it doesn't require root (ex. 50080)
+Then you'll configure a vhost on apache to point to the other
+server
+You can then setup multiple reverse proxies on the same machine if
+required
+20
+
+Apache Reverse Proxies (continued)
+The VirtualHost config should look like:
+<VirtualHost *:80>
+ServerName java.example.com
+ProxyPreserveHost On
+ProxyPass / http://127.0.0.1:50080/
+ProxyPassReverse / http://127.0.0.1:50080/
+</VirtualHost>
+Keep in mind the destination server doesn't have to be localhost, it
+could be located anywhere the server can reach
+21
+
+
+
+
+
+
+
+
+
+
+
+
+
+Chapter 10
+
+
+MariaDB/MySQL
+
+Objectives
+Learn about MariaDB and MySQL
+Learn how to create users in MariaDB
+Learn how to create Databases in MariaDB
+Review SQL
+Learn how to backup a database
+2
+
+MySQL & MariaDB
+What is MySQL?
+MySQL is an open source relational database management
+system
+It uses a multithreaded design approach
+MySQL was purchased by Oracle, and since it was
+trademarked it was then forked (meaning the code was taken
+to create a new project)
+The MySQL fork is called MariaDB
+In our labs we are going to use MariaDB
+3
+
+Why use a RDBMS?
+Historically we used flat files to store data
+Flat files are simply text files with forced column widths
+Searching through a flat file was particularly slow, especially
+reading a whole file to process the data
+So relational databases were created for speed and efficiency
+Relationally databases increase efficiency through properly
+user defined tables, indexed by primary keys
+Tables can be linked together with foreign keys
+4
+
+Why use MySQL/MariaDB?
+It has superior performance when compared to other opensource
+RDBMS like PostgreSQL and SQLite
+It is well supported by its open source community
+No license fees
+Proprietary DB license fees are usually substantial (like DB2,
+Oracle, or MSSQL)
+It is lightweight while offering a full feature set
+5
+
+What is SQL?
+SQL is a common standard used by most relational databases
+It is used to create, update and retrieve information from a
+relational database
+SQL has a very particular syntax, however most relational
+database add a few extra features that are non-standard
+For example: MySQL has REPLACE
+Commonly referred to as Structured Query Language
+6
+
+SQL
+SQL is declarative - you describe what you want and the
+database will determine how to do it
+SQL is interactive - you issue SQL commands directly to your
+database management system and it displays the results
+SQL can also be embeded - you can embed SQL statements into
+a scripting or programming language like BASH, PHP or Java
+SQL is standardized - no one owns it, but it is a standard that is
+defined by an international standards working group
+7
+
+What makes up a RDBMS?
+A database is generally made up of multiple schemas
+Schemas contain multiple tables
+Note: In MySQL a database and schema are the same both
+contain tables
+A table contains columns and rows (records)
+8
+
+Columns
+Each column represents a specific attribute or property of the
+table's entity type
+Each column has a domain (set of constraints) that include
+restrictions on a value's datatype, length, range, uniqueness,
+specific values and nullability (can be null or not)
+Entries in columns are single valued
+Order of columns is unimportant
+Each column has a name that ID's it uniquely within a table
+Column definitions rarely change
+9
+
+Rows (Records)
+Each row describes an entity
+Each column in the row contains a value based on the column
+constraints for the entity
+In a properly designed database, no 2 rows should be the same
+Each row should be identified by a unique primary key
+Rows frequently change
+The cross-section of columns and rows create Fields
+Fields are a single value!
+10
+
+Primary Key - Introduction
+Each table should have exactly one primary key
+Each record must have a unique primary key ID
+A primary key can be made up of a single column or multiple
+columns
+A primary key cannot be null
+11
+
+mariadb
+In order to install MariaDB you'll need to run
+apt install mariadb-client, mariadb-server
+The service name will still be mariadb
+The service will call the command mysqld
+The client is the mysql command
+Generally speaking we don't want to open the database to
+external access so make sure the database is behind some kind
+of firewall whether external or iptables
+12
+
+Securing MySQL
+Run the command mysql_secure_installation to be prompted to
+secure your database installation
+Set root password
+Not to be confused with the system root password, MySQL
+has it's own root user
+Remove Anonymous users
+Disallow root login remotely
+Remove Test Database
+13
+
+MySQL shell
+You must log into the MySQL shell to:
+Create Databases/Schemas
+Create Users
+Grant/Revoke privileges
+Create/Update/Drop tables
+Insert/Update/Delete records
+Query records for information
+14
+
+Command: mysql
+Command Description
+mysql
+Login to the database at localhost
+on the default port as root with no
+password
+mysql -u bob -p"drowssap"
+Login to the local database as user
+bob with the password drowssap
+mysql -u bob -p"drowssap"
+--host=php.scweb.ca --
+port=3306
+Login to the MySQL server on
+php.scweb.ca on port 3306
+15
+
+Creating Databases/Schemas
+Recall Databases and Schemas are the same in MySQL
+In order to create a database we would use:
+CREATE DATABASE mit416;
+In CLI client:
+mysql> CREATE DATABASE mit416;
+16
+
+Creating Users
+To create the user student available on localhost with the
+password of test1
+CREATE USER 'student'@localhost IDENTIFIED BY 'password';
+You can use different hosts and a wildcard to allow connections
+/* Allow users from any host */
+CREATE USER 'student'@'%' IDENTIFIED BY 'password';
+/* Allow users from any host that ends with scweb.ca */
+CREATE USER 'student'@'%.scweb.ca' IDENTIFIED BY 'password';
+/* Allow users from any IP that starts with 192.168 */
+CREATE USER 'student'@'192.168.%.%' IDENTIFIED BY 'password';
+17
+
+Granting Privileges
+Now that we've created users and databases we want to grant
+privileges to those users
+/* Grant all privileges to student for the database mit416 and its tables */
+GRANT ALL PRIVILEGES ON mit416.* to student@localhost
+/* Grant read privileges to student on exampledb */
+GRANT SELECT ON exampledb.* to student@localhost
+Granting all permissions on a database provides all privileges to
+functions and tables
+More info here: https://mariadb.com/kb/en/library/grant/
+18
+
+Viewing Users
+To view users on a MySQL database
+SELECT user,host,password FROM mysql.user;
+MariaDB [(none)]> SELECT user,host,password FROM mysql.user where user='fiacobacci';
++------------+------+-------------------------------------------+
+| user | host | password |
++------------+------+-------------------------------------------+
+| fiacobacci | % | *451559073555104A841F0DEFEBCE26CEC5617D7F |
++------------+------+-------------------------------------------+
+1 row in set (0.001 sec)
+19
+
+Viewing Privileges
+To view privileges on a MySQL database
+SHOW GRANTS FOR fiacobacci@localhost
+MariaDB [(none)]> SHOW GRANTS FOR fiacobacci;
++------------------------------------------------------------+
+| Grants for fiac |
++------------------------------------------------------------+
+| GRANT USAGE ON *.* TO 'fiacobacci'@'%' IDENTIFIED BY
+PASSWORD '*451559073555104A841F0DEFEBCE26CEC5617D7F' |
+| GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP,
+REFERENCES, INDEX, ALTER, CREATE TEMPORARY TABLES, LOCK TABLES,
+EXECUTE, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE,
+EVENT, TRIGGER ON `fiacobaccidb`.* TO 'fiacobacci'@'%' |
++------------------------------------------------------------+
+20
+
+Creating Tables
+Creating and employee table
+CREATE TABLE employee(
+ id INT NOT NULL AUTO_INCREMENT,
+ firstname VARCHAR(20),
+ lastname VARCHAR(20),
+ department VARCHAR(20),
+ PRIMARY KEY (id)
+);
+Remove tables
+DROP TABLE employee;
+21
+
+Inserting/Updating/Deleting Records
+You can Create records using INSERT INTO , modify them with
+UPDATE and remove them with DELETE FROM
+/* Create a record */
+INSERT INTO employee VALUES (DEFAULT,"Franco", "Iacobacci", "Networking");
+/* Modify the record */
+UPDATE employee SET department="IT" WHERE id=1;
+/* Delete the record */
+DELETE FROM employee WHERE id=1;
+22
+
+Viewing data from a Database
+In order to view data you can use SELECT
+/* Select all records from employee */
+SELECT * FROM employee
+/* Select all records with the first name Bob */
+SELECT * FROM employee WHERE firstname='Bob'
+/* Select all records and order by the ID */
+SELECT * FROM employee ORDER BY id
+23
+
+Exporting a MySQL Database
+In order to export a MySQL database you can run the following
+command
+mysqldump -u username -p"password" database_name > File.sql
+Replace username, password and database_name with your
+MySQL username, password and database name. FILE.sql now
+holds a backup of your database.
+24
+
+Resetting the root password
+Don't forget your root password!!!!!
+OK in case you do:
+1. Stop the mysqld service
+2. Run mysqld_safe --skip-grant-tables &
+3. Login to mysql shell using mysql
+4. Update forgotten password using (see code below)
+5. Restart service
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'newpassword';
+FLUSH PRIVILEGES;
+25
+
+
+
+
+
+
+
+
+Chapter 9
+
+Apache & PHP
+
+Objectives
+Learn about the Apache Web Server
+Learn about vhosts
+Learn how to configure the firewall on Debian
+Learn about LetsEncrypt certificates
+2
+
+Apache
+What is Apache?
+An open source Web Server
+Runs on Linux, Windows, and Mac OS
+It is considered very secure, fast and reliable
+Apache supports several server side scripting languages
+Most notably PHP
+Apache also supports a variety of mods
+Default port is 80 for http and 443 for https
+3
+
+Multi-Processing Modules (MPMs)
+What is an MPM?
+MPMs are used to bind to network ports, accept requests, and
+dispatch child processes to handle the requests
+Since apache is modular it comes with multiple MPM options, these
+are also based on the capability of the operating system
+See https://httpd.apache.org/docs/2.4/en/mpm.html for more
+detail
+4
+
+apache2
+The package and service name on Debian for apache is apache2
+Configuration files by default are in:
+/etc/apache2/
+All configuration files are plain text files
+Log files are located in /var/log/apache2/ by default
+access_log - contains information about people who access your website
+error_log - contains error information about failed attempts to
+access your website
+5
+
+apache2.conf
+By default the document root is in /var/www.html
+DocumentRoot /var/www/html - in apache2.conf
+By default apache will look for an index.html page to display when
+the user navigates to the root of your website
+Apache by default blocks all files (includes sub directories):
+# Block all by default
+<Directory />
+AllowOverride none
+Require all denied
+</Directory>
+6
+
+apache2.conf (continued)
+You have to allow individual directories:
+<Directory "/var/www/html">
+Options Indexes FollowSymLinks
+AllowOverride None
+Require all granted
+</Directory>
+You can also block specific files:
+<Files ".ht*">
+Require all denied
+</Files>
+7
+
+apache2.conf (continued)
+You can specify additional optional configuration files with the
+IncludeOptional
+IncludeOptional sites-available/*.conf
+Custom error Documents
+ErrorDocument 404 /missing.html
+8
+
+vhosts (sites)
+What are vhosts?
+A vhost is a virtual host, this allows you to host multiple
+websites on the same server
+for example you can host api.example.com and
+www.example.com using the same server
+you can even host different domains like test.com and
+notatest.com
+Each vhost will have a separate configuration, and are usually
+located in different directories
+9
+
+vhost (site) config
+<VirtualHost *:80>
+ServerName example2.com
+DocumentRoot /var/www/example2.com/html/
+ErrorLog /var/log/apache2/error_log_ex2
+CustomLog /var/log/apache2/access_log_ex1 common
+</VirtualHost>
+<VirtualHost *:80>
+ServerName example1.com
+DocumentRoot /var/www/example1.com/html/
+ErrorLog /var/log/apache2/error_log_ex1
+CustomLog /var/log/apache2/access_log_ex1 common
+</VirtualHost>
+10
+
+vhost (site) config continued
+<Directory /var/www/example2.com/html/>
+Require all granted
+</Directory>
+11
+
+Starting and Stopping
+You can use systemd tools to start and stop the apache server
+systemctl start apache2 - start the service now
+systemctl enable apache2 - have the service start at system
+startup
+systemctl stop apache2 - stop the service
+systemctl restart apache2 - restart the service
+systemctl reload apache2 - reload is supported by apache2,
+this means it will reload the configuration without stopping the
+server
+12
+
+apachectl
+Apache also comes with its own tool called apachectl
+Command Description
+apachectl start Start the server
+apachectl stop Stop the server
+apachectl restart Restart the server
+apachectl configtest Test the syntax of the configuration
+apachectl status Display a brief status of the server
+apachectl fullstsatus Display full status report from mod_status
+13
+
+a2enmod and a2dismod
+Apache on debian also comes with its own tool for
+enabling/disabling modules
+a2enmod {module} and a2dismod {module}
+Command Description
+a2enmod ssl
+Enable the ssl module on apache2 by creating
+symlinks from mods-available in mods-enabled
+a2dismod ssl
+Disable the ssl module on apache2 by removing
+symlinks from mods-enabled
+14
+
+a2ensite and a2dissite
+Apache on debian also comes with its own tool for
+enabling/disabling sites(vhosts)
+a2ensite {site conf} and a2dissite {site conf}
+Command Description
+a2ensite
+iacobacci.com.conf
+Enable the iacobacci.com.conf site on apache2
+by creating symlinks from sites-available in
+sites-enabled
+a2dissite
+iacobacci.com.conf
+Disable the iacobacci.com.conf module on
+apache2 by removing symlinks from sitesenabled 
+15
+
+a2enconf and a2disconf
+Apache on debian also comes with its own tool for
+enabling/disabling specific configurations
+a2enconf {conf} and a2enconf {conf}
+Command Description
+a2enconf security.conf
+Enable the security.conf site on apache2
+by creating symlinks from confavailable in conf-enabled
+a2disconf security.conf
+Disable the security.conf module on
+apache2 by removing symlinks from
+conf-enabled 
+16
+
+SSL/TLS Support
+Apache supports SSL/TLS and HTTPS
+First you must enable the SSL mod using apt a2enmod ssl
+Next you'll need to obtain a certificate
+Then configure you Protocol and Cipher Suites
+17
+
+default-ssl.conf and ssl.conf
+Setting a certificate (more on getting one later):
+SSLCertificateFile /etc/letsencrypt/live/iacobacci.ca/fullchain.pem
+SSLCertificateKeyFile /etc/letsencrypt/live/iacobacci.ca/privkey.pem
+Set SSL ciphers
+SSLProtocol all -SSLv3
+SSLCipherSuite EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH
+SSLHonorCipherOrder on
+18
+
+Certificates
+There are 3 ways to get certificates
+Generate your own, however this won't be a valid verifiable
+certificate, and browsers will warn you the site is insecure
+Purchase a certificate
+Use a Let's Encrypt certificate
+Remember just like SSH, the private certificate MUST remain
+secure and private
+19
+
+Let's Encrypt
+Let's encrypt provides free HTTPS certificates
+They have to be renewed about every 3 months
+There are some limitations on how many certificates each account
+and domain can have
+Let's Encrypt does not verify the owner of the certificate outside of
+the domain
+To get a certificate through Let's Encrypt using the program
+certbot is highly recommended
+https://certbot.eff.org/
+yum install certbot
+20
+
+HTTP/2
+HTTP/2 is the newest version of HTTP
+it is a binary protocol rather then plain text (HTTP/1.1)
+HTTP/2 support multiple streams simultaneously
+Apache has mod_http2 in order to implement HTTP/2
+HTTP/2 is not compatible with all MPMs so be careful with your
+configuration!
+21
+
+PHP
+What is PHP?
+PHP: Hypertext Preprocessor is a server side scripting language
+These script are executed generally to produce dynamic content
+for a website
+PHP supports many databases (MySQL, MSSQL, Oracle, DB2,
+Generic ODBC)
+Support OOP and structural programming
+22
+
+Install and Using PHP
+In order to install PHP
+apt install php php-mysql libapache2-mod-php
+The php packages comes with the required configuration for
+apache to read php files. An apache reload will be required.
+Once PHP is operation you can then create a script to see your
+PHP info
+<?php
+phpinfo();
+?>
+23
+
+PHP at runtime
+When a PHP file is navigated to, apache will call PHP to run the
+script
+Since PHP is an interpretive language it will read the file and
+interpret with each run (no compilation required)
+The script will run as the user the apache server is running as
+24
+
+php.ini
+The PHP configuration file is located in
+/etc/php/{version}/{application}/php.ini
+Some of the common configuration changes you might want to edit
+include:
+upload directory
+global variables
+max uploading size
+max script execution time
+25
+
+php.ini (continued)
+error_reporting
+Default Value: E_ALL & ~E_NOTICE
+Development Value: E_ALL | E_STRICT
+Production Value: E_ALL & ~E_DEPRECATED
+html_errors
+Default Value: On
+Development Value: On
+Production value: Off
+26
+
+p
+h
+p
+.
+i
+n
+i
+(
+c
+o
+n
+t
+i
+n
+u
+e
+d
+) log_errors Default Value: Off Development Value: O
+n
+P
+r
+o
+d
+u
+c
+tio
+n
+V
+alu
+e: O
+n
+dis
+pla
+y
+_
+e
+r
+r
+o
+r
+s
+D
+e
+f
+a
+ult
+V
+alu
+e: O
+n
+D
+e
+v
+elo
+p
+m
+e
+n
+t
+V
+alu
+e: O
+n
+P
+r
+o
+d
+u
+c
+tio
+n
+V
+alu
+e: O
+f
+f
+E
+x
+a
+m
+ple, dis
+pla
+y
+_
+e
+r
+r
+o
+r
+s
+=
+O
+n
+27
+
+Firewall
+By default Linux comes with a firewall called iptables
+iptables has a lot of options:
+Including when packets will be analyzed (ex. prerouting,
+postrouting, input, output, forward)
+how to filter them and what do to with them
+However all the options of iptables makes it complicated to use so
+instead we use a command called firewalld and firewall-cmd to
+configure the basics
+firewalld must be installed with apt install firewalld
+28
+
+firewall-cmd
+Command Description
+firewall-cmd --permanent --addport=80/tcp
+Open TCP port 80
+permanently
+firewall-cmd --permanent --addservice=https
+Open port(s) for https
+permanently
+firewall-cmd --permanent --removeport=443/tcp
+Closes TCP port 443
+permanently
+firewall-cmd --reload
+Reload the firewall
+configuration
+29
+
+
+
+
+
+
+
+
+
+
+
+
+Chapter 8
+
+
+SSH
+
+Objectives
+Learn how SSH works
+Learn the functions of SSH
+Learn how to use key authentication with SSH
+
+2
+Secure Shell (SSH)
+What is SSH?
+SSH is a protocol that allows you to remotely connect to a
+system and run command line and potentially GUI protocols
+It also allows for SFTP transfers
+And SSH tunnels, allowing you to tunnel your connection
+through a server located elsewhere
+Most Linux Server distributions come with an SSH server
+preinstalled because it is considered secure
+Default port is 22
+3
+
+Background Info - Symmetric Encryption
+Symmetric Encryption - is encryption in which one key is used to
+both encrypt and decrypt the information
+The key is generally called a shared secret
+In SSH the shared secret is session specific and a new one is
+generated for each client that connects
+There are a variety of connection algorithms like:
+AES
+Blowfish
+4
+
+Background Info - Asymmetric Encryption
+Asymmetric Encryption - is encryption in which a public key is
+shared to encrypt the data and a private key is used to decrypt the
+data on the server end
+The Asymmetric encryption is only used in establishing the session
+Example protocols:
+Diffie Hellman
+Elliptic Curve Diffie Hellman
+5
+
+How does SSH work?
+1. First a TCP session must be established through a TCP handshake
+2. Then the server presents accepted encryption protocols and
+versions. As well as the authentication key for the client to verify
+the server. If there is a matching pair, then the connection will
+proceed.
+3. The client will also receive the public key for the server. The client
+will then verify the public key with historical records (if available),
+then connect.
+4. First Asymmetric encryption is used to establish a secure session.
+5. Then Symmetric encryption is used to share session data securely.
+6
+
+OpenSSH Server
+Most common SSH server
+Comes preinstalled on Debian
+Configuration is in /etc/ssh/sshd_config
+Service name sshd
+7
+
+/etc/ssh/sshd_config
+It's a good idea to disable remote login for root
+You can disable ciphers and algorithms that are considered
+insecure
+You can give specific permissions to specific groups, for example
+you can force the shell to be sftp
+8
+
+~/.ssh/known_hosts
+The known_hosts contains all stored authenticated servers
+The public key's are stored when a user accepts a new key and
+stores it permanently for future reference
+php.scweb.ca,204.225.7.45 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTY...
+If the key is changed, most SSH clients will not allow you to
+connect, until you remove the line from known_hosts
+For security reasons you should verify the key through another
+means, like a phone call
+9
+
+Opening a remote shell
+One of the most common uses of an SSH server is remote
+administration
+SSH allows you to open a remote terminal and run any commands
+as if you were connected directly
+Make sure you don't run the shutdown command remote ...
+You can also connect to run a single command
+10
+
+Command: ssh
+ssh [options] [user@]hostname [command]
+Command Description
+ssh php.scweb.ca
+Connect to php.scweb.ca and login as
+the current user on the client system
+ssh root@php.scweb.ca
+Connect to php.scweb.ca login as user
+root
+ssh -C root@php.scweb.ca Connect with compression enabled
+ssh -p 50022 server.com Connect to port 50022
+11
+
+File Transfers
+SSH servers also support file transfer
+There are 2 common methods
+SFTP - Secure File Transfer Protocol
+Which from a user perspective operates similar to FTP based
+on commands
+From a system perspective has a much cleaner
+implementation
+SCP - Secure Copy
+Works similar to the cp command
+12
+
+Command: scp
+scp [options] [[user@host1:]]file1 [[user@host2:]]file2
+Command Description
+scp
+root@php.scweb.ca:~/hello.txt
+/tmp/
+Copy hello.txt from the home
+directory of root on php.scweb.ca
+to /tmp on the current host
+scp /etc/hosts
+root@php.scweb.ca:/etc/hosts
+Copy your local copy of /etc/hosts
+to php.scweb.ca /etc/hosts
+13
+
+Command: sftp
+sftp [user@]host
+Example: sftp root@php.scweb.ca
+Command Description
+put Upload a file to the server
+get Download a file from the server
+lls List local files
+ls List remote files
+14
+
+Command: sftp (continued)
+Command Description
+lcd Change local directory
+cd Change remote directory
+lmkdir Make a directory locally
+mkdir Make a directory remotely
+exit Exit SFTP
+15
+
+Scripting SSH/SFTP
+Notice with all the above commands there is no password option
+The password must be entered manually by the user
+Which means we can't easily script any of the commands above
+There are 2 solutions to scripting SSH
+sshpass - a command that wraps around ssh commands and
+provides a password, however the password would be in plain
+text in the scripts (considered bad practise)
+SSH Key Authentication - using keys to authenticate the user
+similar to how the user authenticates the server
+16
+
+Command: sshpass
+sshpass works by expecting the prompt assword: (to match
+Password: or password:)
+sshpass [-ffilename|-dnum|-ppassword|-e] [options] command arguments
+Command Description
+sshpass -p"password"
+ssh root@php.scweb.ca
+Connect using ssh to php.scweb.ca with
+the password password
+sshpass -f"pass.txt"
+sftp
+root@php.scweb.ca
+Connect using sftp to php.scweb.ca with
+the password being the first line of pass.txt
+17
+
+Where and Why to use sshpass
+Never! ...
+Unless of course there is no possible way to use an authorized key
+Some companies will refuse to use authorized keys
+Some times the server implementation doesn't support
+authorized keys
+18
+
+~/.ssh/authorized_keys
+This is the file in each home directory on a server where keys that
+are accepted as authentication are stored
+You can manually put public keys of authenticated users in this file
+Example:
+ssh-rsa asioudvvabwasduibanUInasOSDUIFnSKLDIo8809sdyfBKJSDFyIBfdkJSD ...
+Alternatively you can have ssh-copy-id to add the key for you
+19
+
+Command: ssh-keygen
+ssh-keygen is used to generate authentication keys to be stored in
+authorized_keys
+ssh-keygen [-b bits] [-t dsa | ecdsa | ed25519 | rsa] [-N new_passphrase]
+Command Description
+ssh-keygen
+Will prompt the user for input
+to create SSH keys
+ssh-keygen -t rsa -b 4096 -C
+"fiacobacci@stclaircollege.ca"
+Will create a 4096 bit RSA key,
+with the email specified
+20
+
+Command: ssh-copy-id
+The command ssh-copy-id uses ssh to copy the generated key over
+to the server, it will prompt you for the users password
+ssh-copy-id [-i identity_file] [-p port] [user@]hostname
+The identity file by default is the newest file that matches
+~/.ssh/id*.pub
+Example ssh-copy-id fiacobacci@php.scweb.ca
+21
+
+Scripting with SSH keys
+If you have configured SSH keys then scripting an SSH connection
+or transfer is easy because you simple call the SSH command
+Unless you added a passphrase to your key, so for scripting
+purposes do not add a passphrase to your key
+If you are not scripting any commands then for security reasons,
+you should have a passphrase on your key
+22
+
+Using multiple keys on a System
+If you have multiple SSH keys for your SSH client you can use
+~/.ssh/config to configure which key is used when
+This can be different based on a username and host combination
+Host php.scweb.ca
+Hostname php.scweb.ca
+IdentityFile ~/.ssh/id_rsa
+User root
+Host php.scweb.ca
+Hostname php.scweb.ca
+IdentityFile ~/.ssh/fiacobacci
+User fiacobacci
+23
+
+SSH Tunnels
+SSH tunnels can be used to connect to other hosts on a remote
+network
+For example you could connect to an RDP server that's only
+accessible internally through an externally available SSH server
+They can also be used to create a SOCKS proxy where you can
+route all traffic through an SSH server
+For example you can route all you web traffic through your SSH
+server
+24
+
+SSH Tunnels
+Command Description
+ssh -D 2001
+root@server.com
+Host a socks proxy on your local machine
+on port 2001 and route traffic through
+your SSH server
+ssh -L
+54000:10.13.37.2:3389
+root@server.com
+Host an SSH tunnel on port 54000 locally
+that routes to the RDP server at the
+remote network at 10.13.37.2
+ssh -R
+54000:172.16.2.4:3389
+root@server.com
+Host an SSH tunnel on port 54000 on the
+remote server that routes to 172.16.2.4
+locally
+25
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Chapter 7
+
+
+Installing and Updating Software
+
+Objectives
+Learn how to install software
+Learn how package managers work
+Learn about dependencies
+2
+
+Installing Software
+Historically in order to install software:
+We would download the source code
+Then depending on the type of code we would either:
+C Code - Use a compiler like GCC (GNU C Compiler) to
+compile the software into a usable application
+BASH Script - store the file as an executable script
+Now we usually use some kind of package manager or package
+management system
+3
+
+Compiling
+Source code has a manifest definition in the compiling
+instructions which lists all dependencies and versions
+If the compiler cannot find these dependencies then it cannot
+continue to compile the software
+In this case the operation will be aborted and stderr displays an
+error message with what dependencies haven't been met
+4
+
+Dependencies
+A dependency is a software library used by the program
+Why should we use dependencies?
+Instead of everyone creating the same software over and over,
+on developer creates a library and everyone can rely on it
+This allows for software to be developed quicker and more
+modularly so pieces and be replaced as needed
+Example: MD5 hashing function can be quickly implemented using
+an MD5 hashing library
+5
+
+Dependencies - Scenario - Multiple Versions
+App1 needs libfoo v1.2
+App2 needs libfoo v1.3
+When you have 2 different applications requiring the same library
+but different versions there is an issue
+You can either store 2 libraries, which can get messy
+Upgrade the older application to the new library if you are the
+developer
+6
+
+Dependencies - Scenario - Nested Dependencies
+Libfoo1.3 requires libgc1.33 and libC++1.67
+libgc1.33 requires libBar1.99 and libLubar2.37
+libLubar2.37 requires libnet1.2
+Just imagine this could be nested hundreds of times with
+thousands of dependencies especially when dealing with complex
+applications
+Imagine doing that manually?
+7
+
+Dependencies - Scenario - Circular Dependencies
+AppX v1 depends on app2
+which depends on app3
+which depends on app4
+which depends on AppX v0
+This is called circular dependencies
+In order to solve this problem all versions have to be installed
+simultaneously
+8
+
+So how do we fix this?
+We could keep track of version numbers and install versions side
+by side as required
+OR
+We could use a package management system!
+9
+
+What is a Package? Software Package is a collection of: 
+Scripts
+Programs
+Files 
+Directories
+List of Dependencies
+
+Programs are:
+Executable files
+Source code to be compiled
+10
+
+Package Management Systems
+
+A Package Management System is a set of utilities that allow for
+package
+
+Installation
+Upgrading
+Removal
+Searching
+
+All these procedures are done based on a local database
+The local database is synced with remote repositories
+11
+
+Repositories
+A repository is a server that holds packages and package
+information
+They can be located on the internet
+Hosted internally
+Stored on the installation DVD
+Each distribution has at least one centralized repository, with
+packages tested and compiled for that specific distribution
+Each distribution has different package delivery standards
+12
+
+Repository Configuration FIles
+A Repository configuration file will contain information about the
+repository including:
+Name
+Location (URL)
+Alternate locations (Mirror)
+In debian the repository configuration files are in
+/etc/apt/sources.list
+Example:
+deb.debian.org/debian/ bullseye-updates main
+13
+
+Distribution Package Formats
+*
+.deb for Debian Based Distros
+Ex. Debian, Ubuntu, MX Linux
+Also may contain Source or Pre-Compiled Binaries
+*
+.rpm for Redhat Based Distros
+Including CentOS
+May Contain Source or Pre-Compiled Binaries
+*
+.tgz/.tar.gz for Source Code compilation
+Contains compressed version of the source code to be installed
+14
+
+Debian Package Manager (dpkg)
+dpkg can
+Install
+Uninstall
+Upgrade
+Query and Verify deb packages
+Maintain a record of installed packages
+Cannot automatically install dependencies
+Does not communicate with the repository
+15
+
+Command: dpkg/dpkg-query
+
+dpkg [options] action
+dpkg-query [options] action
+
+Command Description
+dpkg-query --list tmux "Query for the tmux package"
+dpkg-query --list "Query every package"
+dpkg -i tmux-2.4.2.e17_x86_64.deb "Install tmux from file"
+dpkg -r tmux "Removes the package tmux"
+16
+
+apt
+apt (advanced package tool)
+The front end manager for dpkg packages
+Installs package and dependencies when required
+Manages software upgrades from a repository
+Deals with managing all potential software from repositories
+17
+
+Command: apt
+Command Description
+apt list --installed "List installed packages"
+apt list --upgradeable "List upgradeable packages"
+apt list --all-version "List all versions of installed paackages"
+apt list --installed tmux "List installed version of tmux"
+apt list --upgradeable tmux "List upgradeable versions of tmux"
+apt list --all-version tmux "List all versions of tmux"
+18
+
+Command: apt
+Command Description
+apt install tmux "Install tmux package"
+apt search tmux "Search for tmux package"
+apt-file search bin/tmux "Find packages that provide the tmux file"
+apt info tmux "Provide info on the tmux package"
+apt update "Update the package listing"
+apt upgrade "This command will upgrade your installed packages"
+19
+
+Why ever use dpkg?
+
+Software packages maintained in server repositories are generally
+old and thoroughly tested, therefore considered stable
+Sometimes you'll want a newer version of software for the latest
+features
+In that case you'll have to download the latest version manually
+and install it using dpkg
+Keep in mind this means you are dealing with dependencies
+20
+
+dpkg Package Information
+nano-2.2.6-1.i386.deb
+This states that the package name is nano
+It is version 2.2.6
+-1 is the release
+A release is backports of security fixes
+It has been compiled for the i386 platform
+What is i386?
+i386,i486,i586,i686 are the codenames for 32 Bit processors
+amd64 is the codename for 64 Bit processors
+21
+
+Additional Repos
+It is possible to add additional repositories
+However keep in mind you have to make sure you trust the
+repository as they are sending you software
+Imagine your repositories could have data miners or other
+malicious software in them
+One of the common extra repos to install is epel
+https://fedoraproject.org/wiki/EPEL
+22
+
+Other Package Types
+FlatPak - Developed by Redhat
+https://flatpak.org/
+Snap Packages - Developed by Canonical (Ubuntu)
+https://snapcraft.io/
+AppImage - Community Created
+https://appimage.org/
+23
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Chapter 6
+
+
+Users, Groups and Permissions
+
+Objectives
+Describe a multi user setup
+Explain the benefits of a multi user
+Learn how to create and use Linux groups
+How to use file permissions effectively
+2
+
+Why have multiple users?
+Would you want an end user:
+to be able to shutdown your server?
+to install software that they want?
+overwrite system configuration files?
+What happens if your user account is compromised?
+Users can also be setup with user quotas to prevent any single user
+from taxing the available storage too much
+3
+
+Why have multiple users? (Continued)
+Similarly imagine running multiple services
+Would you want your apache server to have the same user
+account as your FTP server? No!
+Would you want your web server running as root? NO!
+Each service should have its own account and no service should run
+as root
+4
+
+Scenario
+Say you are running an FTP server, and one of your client accounts
+is compromised. What can the attacker see?
+The attacker can only see files and folders associated with that
+account
+The attacker can't modify any other services running on the
+server
+The attacker can't see files belonging to other clients
+5
+
+UID
+UID (User ID) is the unique identifier associated with a user
+account, in all cases this is a number
+the UID of root is 0
+sshd has a UID of 74
+/etc/passwd maps UID to user account names
+Numbers under 1000 are reserved for system users
+1000 and above are used for traditional user accounts
+6
+
+Username Best Practices
+Unix based operating systems are case sensitive
+You can also used mixed case in user names
+You can also use numbers, however do not!
+One of the systemd bugs (or "features") reads an account like
+"0day" as root when running services
+It is recommended that usernames remain all lower case
+Some applications can't read mix cased usernames
+All user accounts must be a single word
+Keep in mind usernames can be changed but UIDs cannot
+7
+
+/etc/login.defs
+The login.defs contains some default configuratoin required for
+Linux user accounts
+At minimum it requires
+MAIL_DIR = where mail is stored
+ENV_SUPATH = the super user path, where super user
+executables are located
+ENV_PATH = the default path where executables are located
+8
+
+/etc/passwd
+/etc/passwd contains all user information including:
+Username
+UID
+Primary Group GID
+Password indicator (look in /etc/shadow)
+User information
+Home directory
+Default Shell
+9
+
+/etc/shadow
+/etc/shadow contains password and login information including:
+Username
+yescrypt hashed password
+The date the password was last changed,based on days from
+epoch (Jan 1, 1970)
+Number of days before the password can be changed
+The amount of days before the password has to be changed
+The number of days the user will get a warning to change their
+password
+10
+
+/etc/skel
+The /etc/skel directory is the skeleton structure of new user
+accounts
+This folder is copied when a user account is created
+It's a good place to store default configuration files for users
+Default required directories
+Only root or sudo users can edit this directory
+11
+
+Adding Users
+The command to add users is useradd
+On debian based systems there is also a wizard style command
+called adduser
+Only root or sudo users can add users
+By default when a user is created a group is also created for that
+user with the same name
+Once a user account is created you'll have to set a password
+If a password is not set the user cannot login, however the user
+can be used for services
+How could that work? Let's think about it 
+12
+
+useradd
+useradd [options] login
+Command Description
+useradd -m franco Create the user account franco
+useradd -m -b /home2
+franco
+Create the user account franco with the
+home directory in /home2/franco
+useradd -m -c "Franco
+Iacobacci" franco
+Create the user account franco and add
+the comment Franco Iacobacci
+Note: default options stored in /etc/default/useradd 
+13 
+
+passwd
+passwd [options] [login]
+Command Description
+passwd
+Prompt to change the password for the current
+user
+passwd franco
+Prompts the user to enter a new password for
+franco (only works for root)
+passwd -e franco
+Make the user account franco expire
+immediately
+14
+
+chpasswd
+chpasswd [options]
+Used for scripting password updates. Ex:
+echo franco:"$tudent1!" | chpasswd
+This will update franco's password to $tudent1!
+15
+
+usermod
+usermod [options] user
+Command Description
+usermod -md
+/home3/franco
+franco
+Change the users franco's home directory to
+/home3/franco and move the current contents to
+the new directory
+usermod -l
+franco Lock the user account franco
+usermod -aG
+dev franco Add the dev group to franco
+16
+
+chfn
+chfn [-f full-name] [-o office] [-p phone] [-h h-phone] [username]
+Command Description
+chfn
+Open an interactive prompt to enter
+user information
+chfn -f "Franco
+Iacobacci" franco
+Assign the full name of Franco
+Iacobacci to franco
+chfn -o 68A franco Assign the office number 68A to franco
+17
+
+Groups
+In Linux, groups have a similar functions to groups in Windows
+Instead of assigning permissions to a directory or file based on
+users only, you can assign an entire group
+Remember all users of the wheel group are given sudo privileges
+Another example, if you a /accounting folder, you can assign an
+accounting group to have read and write access to that folder
+Each user has 1 primary group usually the same name as the user
+name
+User bob would have a group also named bob
+Users can be assigned multiple secondary groups 
+18
+
+GID: Group Identifier
+Configured in /etc/group file
+Users can belong to multiple groups
+GID of 0 is the root groups
+Normally you'll want to keep only root in this group
+Just like in UIDs, GIDs typically start at 1000 and go upwards
+999 and undeer are reserved for system level groups
+19
+
+Group passwords
+Linux groups can have passwords
+Passwords can be assigned using the gpasswd
+If an account has a password a user can join the group without an
+administrator using the newgrp command
+This procedure is inherently insecure due to the group password
+being shared with multiple users. Therefore this is not a
+recommended procedure
+20
+
+/etc/group
+/etc/group stores group information including:
+group name
+password indicator
+GID
+usernames of all the group members
+21
+
+/etc/gshadow
+/etc/gshadow stores the login and password information including:
+group name
+md5 hashed password
+the administor of the group
+usernames of the group members
+22
+
+groupadd
+groupadd [options] group
+Command Description
+groupadd student Create a group called student
+groupadd -r webserver Create a system group webserver
+groupadd -g 1001
+instructor
+Create the instructor group with the
+group id of 1001
+23
+
+gpasswd
+gpasswd [options] group
+Command Description
+gpasswd printers
+Prompt the user to create a password for the
+printers group
+gpasswd -a franco
+printers Add the user franco to the printers group
+gpasswd -d bob
+printers
+Remove the user bob from the printers
+group
+24
+
+newgrp
+newgrp [-] group
+root will not be prompted for a password, all other users will be
+Command Description
+newgrp developers
+Prompt the user for a password to join the
+developers group
+newgrp - developers
+Prompt the user for a password to join the
+developers group and re-initialize the user
+environment
+25
+
+File Permissions
+26
+
+Why have file permissions?
+Just like on Windows a lot of times you'll want to restrict access to
+files, foldres and executables
+Would you want each user to modify each others home directory?
+Would you want everyone to be able to run the shutdown
+command?
+27
+
+What permissions look like
+Recall running the ls -l command you see something like:
+drwxr-x--- 2 fiacobacci fiacobacci 4096 Feb 18 03:27 logs
+drwx--S--- 21 fiacobacci apache 4096 Feb 15 15:30 public_html
+-rw-r--r-- 1 fiacobacci fiacobacci 4578 Oct 30 11:37 tmux-client-3456.log
+The first column decribes all permissions, its always 10 characters
+Next the number of links to the file
+Then the username of the user owner
+Then the group name of the group owner 
+28
+
+Permission break down
+First of the 10 characters is the file type
+- means a regular file
+b block special
+d directory
+l symbolic link
+s socket
+p named pipe
+c character device file
+a device that appears as a regular file
+29
+
+Permission breakdown (continued)
+The next 9 character are broken into 3 groups of 3
+User permissions - based user owner
+Group permissions - based on group owner
+Other permissions - all other users
+Each 3 is broken into:
+r which is read
+w which is write
+x which is execute
+30
+
+Directory permission breakdown
+Directory permissions are different from file permissions,
+obviously a directory can't be executed
+r - Permits the listing of files within the directory
+w - Permits creation, renaming, deleting files within the
+directory, and modifying the directory's attributes
+x - Permits directory entry, and access to the files and subdirectories inside
+Directories need the x permission to be usable
+31
+
+Permissions Numeric
+The user, group and other permissions can also be represented
+numerically, through 3 sets of 3 bits which are added together
+r = 4
+w = 2
+x = 1
+For example:
+rw-r--r-- = 644
+rwx------ = 700
+rwxrw-r-- = 764
+rwxrwxrwx = 777
+32
+
+Permission Examples
+-rw-r--r-- = A file in which the user owner can read or write but
+not execute, the group can read and everyone else can also read
+the file
+drwx------ = A directory in which the user owner can list the files,
+create and modify files, and change into the directory, no one else
+can use the directory
+-rwxr----- = A file the user can read, write and execute the file,
+the group can read the file and other users can't view the file
+33
+
+Special Permissions SUID,GUID
+There are also special permissions for files
+On a file this means execute the file as the user owner or the
+group owner depending on which sticky bit is set
+Note: Scripts cannot have a sticky bit this has to be a program
+created and compiled
+Example: passwd, runs as root even when a regular user calls
+it
+When assigning permissions with chmod it would be u+s or
+g+s (more on this shortly)
+34
+
+Sticky Bit
+The special permissions for a directory are different
+The user bit has no effect
+The group bit will have the group owner of files and folders in
+the directory created with the same group owner as the
+directory
+The other bit will only allow deletion of a file from the original
+owner (or of course root)
+35
+
+Commands
+File and folder permissions can be changed with chmod
+Stands for change mode
+Used in conjunction with numeric or character permissions
+The user and group owners can be changed with chown
+Stands for change owner
+36
+
+chmod
+chmod [options]... mode[,mode]... file...
+chmod [options]... numeric_mode file...
+Command Description
+chmod 777 file
+Set read, write and execute to everyone on
+file
+chmod ugo+rwx folder
+Add read, write an execute to user, group
+and other
+chmod +r,u+wx file
+Add read to everyone, and write and
+execute to user
+37
+
+chown
+chown [options] [owner][:[group]] file
+Command Description
+chown franco file Change the user to franco on file
+chown franco:www folder
+Change the user to franco and the group
+to www
+chown :www folder Change the group of the folder to www
+chown franco: file
+Change the user to franco and the group
+to the primary group of franco
+38
+
+
+
+
+
+
+
